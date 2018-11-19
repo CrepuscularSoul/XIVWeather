@@ -19,7 +19,7 @@
 			android:background="?android:attr/colorPrimary"
 			android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
 		
-		<View android:id="@+id/fragment_view" 
+		<FrameLayout android:id="@+id/fragment_view" 
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 		/>

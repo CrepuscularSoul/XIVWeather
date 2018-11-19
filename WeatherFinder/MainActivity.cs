@@ -28,7 +28,6 @@ namespace WeatherFinder
             SetContentView(Resource.Layout.drawer_layout);
             ConfigureNavigation();
             InitializeView();
-            //ConfigureViews();
         }
 
         //Been using https://developer.android.com/training/implementing-navigation/nav-drawer#java for reference to create the nav drawer
@@ -54,13 +53,14 @@ namespace WeatherFinder
         /// </summary>
         private void InitializeView()
         {
-            //TODO - Load the default fragment and Configure Views in that fragment
+            //TODO - Fix up the way this is displaying
             using (var tran = FragmentManager.BeginTransaction())
             {
                 var fragment = new WeatherFinderFragment();
                 tran.Add(Resource.Id.fragment_view, fragment, string.Empty);
                 tran.Commit();
             }
+
         }
 
         /// <summary>
