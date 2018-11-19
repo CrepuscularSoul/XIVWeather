@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+	
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:orientation="vertical"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+		android:focusable="true"
+		android:focusableInTouchMode="true">
+		
+		<TextView
+			android:text="Zone:"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:id="@+id/textView1" />
+		<Spinner
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/ZoneSpinner" />
+		
+		<TextView
+			android:text="Desired Weather:"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/textView2" />
+		<weatherfinder.MultiSelectionSpinner
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/DesiredSpinner" />
+	
+		<TextView
+			android:text="Previous Weather:"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/textView3" />
+		<weatherfinder.MultiSelectionSpinner
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/PreviousSpinner" />
+
+		<TextView 
+			android:text="Maximum Matches:"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/textView5" />
+		<Spinner
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/MaximumMatches" />
+		
+		<TextView 
+			android:text="Maximum Windows:"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/textView6" />
+		<Spinner
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/MaximumWindows" />
+		
+		
+	
+		<TextView
+			android:text="Window Start:"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/textView4" />
+		<LinearLayout
+			android:orientation="horizontal"
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout1" >
+			<CheckBox
+				android:text="0:00 - 7:59"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/chkZeroToEight" />
+			<CheckBox
+				android:text="8:00 - 15:59"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/chkEightToSixteen" />
+			<CheckBox
+				android:text="16:00 - 23:59"
+				android:layout_width="wrap_content"
+				android:layout_height="match_parent"
+				android:id="@+id/chkSixteenToTwentyFour" />
+		</LinearLayout>
+		<Button
+			android:text="Find Weather"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/findWeather" />
+		<TableLayout
+			android:minWidth="25px"
+			android:minHeight="25px"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/resultsTable">
+		</TableLayout>
+	</LinearLayout>
+</ScrollView>
