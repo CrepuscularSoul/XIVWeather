@@ -53,7 +53,6 @@ namespace WeatherFinder
         /// </summary>
         private void InitializeView()
         {
-            //TODO - Fix up the way this is displaying
             using (var tran = FragmentManager.BeginTransaction())
             {
                 var fragment = new WeatherFinderFragment();

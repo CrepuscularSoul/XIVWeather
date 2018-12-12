@@ -7,24 +7,29 @@
 	android:layout_height="match_parent"
 	android:fitsSystemWindows="true">
 
-	<FrameLayout
-		android:id="@+id/content_frame"
+	<LinearLayout
+		android:id="@+id/content_wrapper"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent">
+		android:layout_height="match_parent"
+		android:orientation="vertical">
 
-		<android.support.v7.widget.Toolbar
-			android:id="@+id/toolbar"
+		<FrameLayout
+			android:id="@+id/content_frame"
 			android:layout_width="match_parent"
-			android:layout_height="?android:attr/actionBarSize"
-			android:background="?android:attr/colorPrimary"
-			android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
-		
-		<FrameLayout android:id="@+id/fragment_view" 
-			android:layout_width="match_parent"
-			android:layout_height="match_parent"
-		/>
-	</FrameLayout>
+			android:layout_height="wrap_content">
 
+			<android.support.v7.widget.Toolbar
+				android:id="@+id/toolbar"
+				android:layout_width="match_parent"
+				android:layout_height="?android:attr/actionBarSize"
+				android:background="?android:attr/colorPrimary"
+				android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+		</FrameLayout>
+		<FrameLayout 
+			android:id="@+id/fragment_view" 
+			android:layout_width="match_parent"
+			android:layout_height="fill_parent" />
+	</LinearLayout>
 	<android.support.design.widget.NavigationView
 		android:id="@+id/nav_view"
 		android:layout_width="wrap_content"
