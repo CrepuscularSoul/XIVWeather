@@ -164,9 +164,9 @@ namespace WeatherFinder
             var cur = new ImageView(_view.Context);
             var et = new TextView(_view.Context);
             var lt = new TextView(_view.Context);
-            prev.SetImageResource(GetWeatherIconIdFromName(previous));
+            prev.SetImageResource(Helpers.GetWeatherIconIdFromName(previous));
             prev.TooltipText = previous;
-            cur.SetImageResource(GetWeatherIconIdFromName(current));
+            cur.SetImageResource(Helpers.GetWeatherIconIdFromName(current));
             cur.TooltipText = current;
             et.Text = FormatEorzeaHour(eorzeaHour);
             lt.Text = localTime;
@@ -176,52 +176,6 @@ namespace WeatherFinder
             tableRow.AddView(et);
             tableRow.AddView(lt);
             return tableRow;
-        }
-
-        /// <summary>
-        /// Get the resource id for the appropriate weather icon
-        /// </summary>
-        private static int GetWeatherIconIdFromName(string str)
-        {
-            switch (str)
-            {
-                case "Blizzards":
-                    return Resource.Drawable.Blizzards;
-                case "Clear Skies":
-                    return Resource.Drawable.ClearSkies;
-                case "Clouds":
-                    return Resource.Drawable.Clouds;
-                case "Dust Storms":
-                    return Resource.Drawable.DustStorms;
-                case "Fair Skies":
-                    return Resource.Drawable.FairSkies;
-                case "Fog":
-                    return Resource.Drawable.Fog;
-                case "Gales":
-                    return Resource.Drawable.Gales;
-                case "Gloom":
-                    return Resource.Drawable.Gloom;
-                case "Heat Waves":
-                    return Resource.Drawable.HeatWaves;
-                case "Rain":
-                    return Resource.Drawable.Rain;
-                case "Showers":
-                    return Resource.Drawable.Showers;
-                case "Snow":
-                    return Resource.Drawable.Snow;
-                case "Thunder":
-                    return Resource.Drawable.Thunder;
-                case "Thunderstorms":
-                    return Resource.Drawable.Thunderstorms;
-                case "Umbral Static":
-                    return Resource.Drawable.UmbralStatic;
-                case "Umbral Wind":
-                    return Resource.Drawable.UmbralWind;
-                case "Wind":
-                    return Resource.Drawable.Wind;
-                default:
-                    return 0;
-            }
         }
 
         /// <summary>

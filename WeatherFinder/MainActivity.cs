@@ -67,8 +67,18 @@ namespace WeatherFinder
         /// </summary>
         public bool OnNavigationItemSelected(IMenuItem menuItem)
         {
-            //TODO - Get rid of this dummy code and deal with fragments
-            menuItem.SetChecked(true);
+            using (var tran = FragmentManager.BeginTransaction())
+            {
+                Fragment f;
+                if (menuItem.ItemId == Resource.Id.forecast)
+                    f = new WeatherForecastFragment();
+                else
+                    f = new WeatherFinderFragment();
+                
+                tran.Replace(Resource.Id.fragment_view, f, string.Empty);
+                tran.Commit();
+            }
+            
             _drawerLayout.CloseDrawers();
             return true;
         }

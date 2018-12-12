@@ -51,7 +51,8 @@ namespace WeatherApp.Domain
                                    || parameters.DesiredWeather.Any(x => x == weather);
                 var previousWeatherMatch = !parameters.DesiredPreviousWeather.Any() 
                                            || parameters.DesiredPreviousWeather.Any(x => x == previousWeather);
-                var timeMatch = parameters.DesiredTimes.Any(x => weatherStartHour.ToString() == x);
+                var timeMatch = !parameters.DesiredTimes.Any() 
+                                || parameters.DesiredTimes.Any(x => weatherStartHour.ToString() == x);
                 
                 if (weatherMatch && previousWeatherMatch && timeMatch)
                 {
@@ -678,6 +679,81 @@ namespace WeatherApp.Domain
                 "Eureka Pagos",
                 "Eureka Pyros"
             };
+        }
+
+        /// <summary>
+        /// Returns a list of available regions
+        /// </summary>
+        public static List<string> GetRegions()
+        {
+            return new List<string>
+            {
+                "Black Shroud",
+                "La Noscea",
+                "Thanalan",
+                "Ishgard/Surrounding",
+                "Gyr Abania",
+                "Far East",
+                "Others"
+            };
+        }
+
+        /// <summary>
+        /// Get the list of zones that belong to the specified region
+        /// </summary>
+        private static List<string> GetZonesForRegion(string region)
+        {
+            var l = new List<string>();
+            switch (region.ToLower())
+            {
+                case "black shroud":
+                    l.AddRange(new [] { "Gridania", "Central Shroud", "East Shroud", "South Shroud", "North Shroud", "The Lavender Beds" });
+                    break;
+                case "la noscea":
+                    l.AddRange(new [] { "Limsa Lominsa", "Middle La Noscea", "Lower La Noscea", "Eastern La Noscea", "Western La Noscea", "Upper La Noscea", "Outer La Noscea", "Mist" });
+                    break;
+                case "thanalan":
+                    l.AddRange(new [] { "Ul'dah", "Western Thanalan", "Central Thanalan", "Eastern Thanalan", "Southern Thanalan", "Northern Thanalan", "The Goblet" });
+                    break;
+                case "ishgard/surrounding":
+                    l.AddRange(new [] { "Ishgard", "Coerthas Central Highlands", "Coerthas Western Highlands", "The Sea of Clouds", "Azys Lla", "The Dravanian Forelands", "The Dravanian Hinterlands", "The Churning Mists", "Idyllshire" });
+                    break;
+                case "gyr abania":
+                    l.AddRange(new [] { "Rhalgr's Reach", "The Fringes", "The Peaks", "The Lochs" });
+                    break;
+                case "far east":
+                    l.AddRange(new [] { "The Ruby Sea", "Yanxia", "The Azim Steppe", "Kugane" });
+                    break;
+                case "others":
+                    l.AddRange(new [] { "Mor Dhona", "Eureka Anemos", "Eureka Pagos", "Eureka Pyros" });
+                    break;
+            }
+
+            return l;
+        }
+
+        /// <summary>
+        /// Get the upcoming weather forecast for the specified region
+        /// </summary>
+        /// <param name="region"></param>
+        /// <returns></returns>
+        public static Dictionary<string, List<WeatherResult>> GetWeatherForecastForRegion(string region)
+        {
+            var dictionary = new Dictionary<string, List<WeatherResult>>();
+            var zones = GetZonesForRegion(region);
+            var parameters = new WeatherParameters
+            {
+                MaxMatches = 25,
+                MaxTries = 25
+            };
+            foreach (var zone in zones)
+            {
+                parameters.Zone = zone;
+                var results = GetUpcomingWeatherResults(parameters);
+                dictionary.Add(zone, results);
+            }
+
+            return dictionary;
         }
     }
 }
