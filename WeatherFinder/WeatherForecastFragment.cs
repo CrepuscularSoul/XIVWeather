@@ -5,6 +5,7 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Graphics;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
@@ -16,6 +17,8 @@ namespace WeatherFinder
     public class WeatherForecastFragment : Fragment
     {
         private View _view;
+        private int _imageHeight;
+        private int _imageWidth;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
@@ -33,6 +36,12 @@ namespace WeatherFinder
             var regionElement = view.FindViewById<Spinner>(Resource.Id.RegionSpinner);
             regionElement.Adapter = regionAdapter;
             regionElement.ItemSelected += RegionSelected;
+
+            var dimensions = new BitmapFactory.Options() { InJustDecodeBounds = true };
+            BitmapFactory.DecodeResource(_view.Resources, Resource.Drawable.Blizzards, dimensions);
+            _imageHeight = (int) (dimensions.OutHeight * ((decimal)dimensions.InTargetDensity / (decimal) dimensions.InDensity));
+            _imageWidth = (int) (dimensions.OutWidth * ((decimal) dimensions.InTargetDensity / (decimal) dimensions.InDensity));
+
         }
 
         public void RegionSelected(object sender, AdapterView.ItemSelectedEventArgs args)
@@ -72,11 +81,13 @@ namespace WeatherFinder
         {
             var layout = new LinearLayout(_view.Context) { Orientation = Orientation.Vertical };
             var spacer = new TextView(_view.Context);
+            spacer.SetMinHeight(_imageHeight);
             layout.AddView(spacer);
 
             foreach (var label in forecast.Keys.OrderBy(x => x))
             {
-                var tv = new TextView(_view.Context) {Text = label};
+                var tv = new TextView(_view.Context) {Text = label, Gravity = GravityFlags.Center};
+                tv.SetMinHeight(_imageHeight);
                 layout.AddView(tv);
             }
 
@@ -85,9 +96,25 @@ namespace WeatherFinder
 
         private ScrollView BuildForecastPanel(Dictionary<string, List<WeatherResult>> forecast)
         {
+            //TODO - Fix scrolling
             var scrollView = new ScrollView(_view.Context);
             var outerLinearLayout = new LinearLayout(_view.Context) { Orientation = Orientation.Vertical };
 
+            var first = forecast.Values.FirstOrDefault();
+            if (first == null)
+                return scrollView;
+
+            // Builds the Eorzea Hour header
+            var headerLayout = new LinearLayout(_view.Context) {Orientation = Orientation.Horizontal};
+            foreach (var item in first.OrderBy(x => x.TimeOfWeather))
+            {
+                var tv = new TextView(_view.Context) { Text = item.StartTime, Gravity = GravityFlags.Center };
+                tv.SetMinHeight(_imageHeight);
+                tv.SetMinWidth(_imageWidth);
+                headerLayout.AddView(tv);
+            }
+            outerLinearLayout.AddView(headerLayout);
+            
             foreach (var kvp in forecast.OrderBy(x => x.Key))
             {
                 var linearLayout = new LinearLayout(_view.Context) { Orientation = Orientation.Horizontal };
@@ -95,6 +122,7 @@ namespace WeatherFinder
                 {
                     var iv = new ImageView(_view.Context);
                     iv.SetImageResource(Helpers.GetWeatherIconIdFromName(value.CurrentWeather));
+                    //TODO - Fix time format (20:6 instead of 20:06)
                     iv.TooltipText = $"{value.CurrentWeather} at {value.TimeOfWeather.Hour}:{value.TimeOfWeather.Minute}";
                     linearLayout.AddView(iv);
                 }
