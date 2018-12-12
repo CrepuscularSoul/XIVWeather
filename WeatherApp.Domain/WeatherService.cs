@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Remoting.Messaging;
 using Javax.Crypto.Spec;
 
@@ -733,13 +734,111 @@ namespace WeatherApp.Domain
         }
 
         /// <summary>
+        /// returns a value for the order that the item should appear when in a list with similar items
+        /// </summary>
+        /// <param name="zone"></param>
+        /// <returns></returns>
+        private static int GetOrderForZone(string zone)
+        {
+            switch (zone)
+            {
+                    case "Limsa Lominsa":
+                        return 1;
+                    case "Middle La Noscea":
+                        return 2;
+                    case "Lower La Noscea":
+                        return 3;
+                    case "Eastern La Noscea":
+                        return 4;
+                    case "Western La Noscea":
+                        return 5;
+                    case "Upper La Noscea":
+                        return 6;
+                    case "Outer La Noscea":
+                        return 7;
+                    case "Mist":
+                        return 8;
+                    case "Gridania":
+                        return 9;
+                    case "Central Shroud":
+                        return 10;
+                    case "East Shroud":
+                        return 11;
+                    case "South Shroud":
+                        return 12;
+                    case "North Shroud":
+                        return 13;
+                    case "The Lavender Beds":
+                        return 14;
+                    case "Ul'dah":
+                        return 15;
+                    case "Western Thanalan":
+                        return 16;
+                    case "Central Thanalan":
+                        return 17;
+                    case "Eastern Thanalan":
+                        return 18;
+                    case "Southern Thanalan":
+                        return 19;
+                    case "Northern Thanalan":
+                        return 20;
+                    case "The Goblet":
+                        return 21;
+                    case "Mor Dhona":
+                        return 22;
+                    case "Ishgard":
+                        return 23;
+                    case "Coerthas Central Highlands":
+                        return 24;
+                    case "Coerthas Western Highlands":
+                        return 25;
+                    case "The Sea of Clouds":
+                        return 26;
+                    case "Azys Lla":
+                        return 27;
+                    case "The Dravanian Forelands":
+                        return 28;
+                    case "The Dravanian Hinterlands":
+                        return 29;
+                    case "The Churning Mists":
+                        return 30;
+                    case "Idyllshire":
+                        return 31;
+                    case "Rhalgr's Reach":
+                        return 32;
+                    case "The Fringes":
+                        return 33;
+                    case "The Peaks":
+                        return 34;
+                    case "The Lochs":
+                        return 35;
+                    case "The Ruby Sea":
+                        return 36;
+                    case "Yanxia":
+                        return 37;
+                    case "The Azim Steppe":
+                        return 38;
+                    case "Kugane":
+                        return 39;
+                    case "Eureka Anemos":
+                        return 40;
+                    case "Eureka Pagos":
+                        return 41;
+                    case "Eureka Pyros":
+                        return 42;
+                    default:
+                        return default;
+            }
+        }
+
+        /// <summary>
         /// Get the upcoming weather forecast for the specified region
         /// </summary>
         /// <param name="region"></param>
         /// <returns></returns>
-        public static Dictionary<string, List<WeatherResult>> GetWeatherForecastForRegion(string region)
+        public static RegionForecast GetWeatherForecastForRegion(string region)
         {
-            var dictionary = new Dictionary<string, List<WeatherResult>>();
+            var forecast = new RegionForecast(region);
             var zones = GetZonesForRegion(region);
             var parameters = new WeatherParameters
             {
@@ -749,11 +848,13 @@ namespace WeatherApp.Domain
             foreach (var zone in zones)
             {
                 parameters.Zone = zone;
+                var order = GetOrderForZone(zone);
                 var results = GetUpcomingWeatherResults(parameters);
-                dictionary.Add(zone, results);
+                forecast.AddZoneForecast(zone, order, results);
             }
 
-            return dictionary;
+            return forecast;
         }
+
     }
 }

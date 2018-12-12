@@ -168,7 +168,7 @@ namespace WeatherFinder
             prev.TooltipText = previous;
             cur.SetImageResource(Helpers.GetWeatherIconIdFromName(current));
             cur.TooltipText = current;
-            et.Text = FormatEorzeaHour(eorzeaHour);
+            et.Text = Helpers.FormatEorzeaHour(eorzeaHour);
             lt.Text = localTime;
 
             tableRow.AddView(prev);
@@ -176,16 +176,6 @@ namespace WeatherFinder
             tableRow.AddView(et);
             tableRow.AddView(lt);
             return tableRow;
-        }
-
-        /// <summary>
-        /// Format the eorzean hour to appear as XX:XX
-        /// </summary>
-        private static string FormatEorzeaHour(string hour)
-        {
-            if (hour.Length == 1)
-                hour = "0" + hour;
-            return $"{hour}:00";
         }
     }
 }

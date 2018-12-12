@@ -59,5 +59,23 @@ namespace WeatherFinder
                     return 0;
             }
         }
+
+        /// <summary>
+        /// Format the eorzean hour to appear as XX:XX
+        /// </summary>
+        public static string FormatEorzeaHour(string hour)
+        {
+            if (hour.Length == 1)
+                hour = "0" + hour;
+            return $"{hour}:00";
+        }
+    }
+
+    public static class Extensions
+    {
+        public static string GetTimePortion(this DateTime d)
+        {
+            return $"{(d.Hour < 10 ? "0" : "")}{d.Hour}:{(d.Minute < 10 ? "0" : "")}{d.Minute}";
+        }
     }
 }
