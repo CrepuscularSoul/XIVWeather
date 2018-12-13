@@ -136,7 +136,7 @@ namespace WeatherFinder
                 {
                     var iv = new ImageView(_view.Context);
                     iv.SetImageResource(Helpers.GetWeatherIconIdFromName(item.CurrentWeather));
-                    iv.TooltipText = $"{item.CurrentWeather} at {item.TimeOfWeather.GetTimePortion()}";
+                    iv.TooltipText = $"{zone.Zone}\n{item.CurrentWeather} at {item.TimeOfWeather.ToLocalTime().ToShortTimeString()}";
                     iv.SetMinimumWidth(_imageWidth);
                     iv.SetMinimumHeight(_imageHeight);
                     linearLayout.AddView(iv);

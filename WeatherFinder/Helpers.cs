@@ -70,18 +70,4 @@ namespace WeatherFinder
             return $"{hour}:00";
         }
     }
-
-    /// <summary>
-    /// Extension methods used in the application
-    /// </summary>
-    public static class Extensions
-    {
-        /// <summary>
-        /// Given a date get the time portion as a string, with 2 digits for hours and minutes
-        /// </summary>
-        public static string GetTimePortion(this DateTime d)
-        {
-            return $"{(d.Hour < 10 ? "0" : "")}{d.Hour}:{(d.Minute < 10 ? "0" : "")}{d.Minute}";
-        }
-    }
 }
