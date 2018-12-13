@@ -27,6 +27,9 @@ namespace WeatherFinder
             return _view;
         }
 
+        /// <summary>
+        /// Configure the region spinner and calculate the height and width to use for forecast panel
+        /// </summary>
         private void ConfigureViews(View view)
         {
             var regions = WeatherService.GetRegions();
@@ -44,6 +47,9 @@ namespace WeatherFinder
 
         }
 
+        /// <summary>
+        /// When the user selects a new region get the forecast for those zones
+        /// </summary>
         public void RegionSelected(object sender, AdapterView.ItemSelectedEventArgs args)
         {
             var spinner = (Spinner) sender;
@@ -62,6 +68,9 @@ namespace WeatherFinder
             forecastView.RequestLayout();
         }
 
+        /// <summary>
+        /// Build the forecast panel based on the data supplied
+        /// </summary>
         private LinearLayout BuildForecastView(RegionForecast forecast)
         {
             var labels = BuildLabelView(forecast);
@@ -77,6 +86,9 @@ namespace WeatherFinder
             return layout;
         }
 
+        /// <summary>
+        /// Builds the zone labels for the weather forecast
+        /// </summary>
         private LinearLayout BuildLabelView(RegionForecast forecast)
         {
             var layout = new LinearLayout(_view.Context) { Orientation = Orientation.Vertical };
@@ -94,6 +106,9 @@ namespace WeatherFinder
             return layout;
         }
 
+        /// <summary>
+        /// Builds the scrollable forecast section
+        /// </summary>
         private HorizontalScrollView BuildForecastPanel(RegionForecast forecast)
         {
             var scrollView = new HorizontalScrollView(_view.Context);
@@ -122,6 +137,8 @@ namespace WeatherFinder
                     var iv = new ImageView(_view.Context);
                     iv.SetImageResource(Helpers.GetWeatherIconIdFromName(item.CurrentWeather));
                     iv.TooltipText = $"{item.CurrentWeather} at {item.TimeOfWeather.GetTimePortion()}";
+                    iv.SetMinimumWidth(_imageWidth);
+                    iv.SetMinimumHeight(_imageHeight);
                     linearLayout.AddView(iv);
                 }
                 outerLinearLayout.AddView(linearLayout);

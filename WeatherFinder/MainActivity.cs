@@ -30,7 +30,9 @@ namespace WeatherFinder
             InitializeView();
         }
 
-        //Been using https://developer.android.com/training/implementing-navigation/nav-drawer#java for reference to create the nav drawer
+        /// <summary>
+        /// Configure the navigation drawer and banner
+        /// </summary>
         private void ConfigureNavigation()
         {
             _drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);

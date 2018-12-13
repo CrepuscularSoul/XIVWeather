@@ -11,6 +11,9 @@ namespace WeatherApp.Domain
     {
         public static List<WeatherChance> WeatherChances { get; }
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
+        private const int SecondsPerEorzeaHour = 175;
+        private const int EorzeaHoursPerWeatherWindow = 8;
+        private const int HoursPerDay = 24;
 
         static WeatherService()
         {
@@ -29,7 +32,7 @@ namespace WeatherApp.Domain
             var weatherStartHour = GetEorzeaHour(weatherStart);
 
             var weather = GetWeatherNameForTime(weatherStart, parameters.Zone);
-            var previousWeather = GetWeatherNameForTime(weatherStart.AddSeconds((8 * 175) * -1.0), parameters.Zone);
+            var previousWeather = GetWeatherNameForTime(weatherStart.AddSeconds((EorzeaHoursPerWeatherWindow * SecondsPerEorzeaHour) * -1.0), parameters.Zone);
 
             return GetResults(parameters, weather, previousWeather,
                 weatherStartHour, weatherStart);
@@ -68,7 +71,7 @@ namespace WeatherApp.Domain
                     matches++;
                 }
 
-                weatherStart = weatherStart.AddSeconds(8 * 175);
+                weatherStart = weatherStart.AddSeconds(EorzeaHoursPerWeatherWindow * SecondsPerEorzeaHour);
                 weatherStartHour = GetEorzeaHour(weatherStart);
                 previousWeather = weather;
                 weather = GetWeatherNameForTime(weatherStart, parameters.Zone);
@@ -92,9 +95,8 @@ namespace WeatherApp.Domain
         public static int GetEorzeaHour(DateTime date)
         {
             var unixSeconds = GetUnixSeconds(date);
-            // Get Eorzea hour
-            var bell = (unixSeconds / 175) % 24;
-            return (int) Math.Floor(bell);
+            var eorzeaHour = (unixSeconds / SecondsPerEorzeaHour) % HoursPerDay;
+            return (int) Math.Floor(eorzeaHour);
         }
 
         /// <summary>
@@ -104,9 +106,9 @@ namespace WeatherApp.Domain
         {
             var unixSeconds = GetUnixSeconds(date);
             // Get Eorzea hour for weather start
-            var bell = (unixSeconds / 175) % 24;
-            var startBell = bell - (bell % 8);
-            var startUnixSeconds = unixSeconds - (175 * (bell - startBell));
+            var eorzeaHour = (unixSeconds / SecondsPerEorzeaHour) % HoursPerDay;
+            var startEorzeaHour = eorzeaHour - (eorzeaHour % EorzeaHoursPerWeatherWindow);
+            var startUnixSeconds = unixSeconds - (SecondsPerEorzeaHour * (eorzeaHour - startEorzeaHour));
             return GetDateFromSeconds(startUnixSeconds);
         }
 
@@ -116,27 +118,21 @@ namespace WeatherApp.Domain
         /// </summary>
         public static ulong CalculateForecastTarget(DateTime date) { 
             // Thanks to Rogueadyn's SaintCoinach library for this calculation.
-            // lDate is the current local time.
-
-            var unixSeconds = GetUnixSeconds(date);
-            // Get Eorzea hour for weather start
-            var bell = unixSeconds / 175;
-
-            // Do the magic 'cause for calculations 16:00 is 0, 00:00 is 8 and 08:00 is 16
-            var increment = (ulong) (bell + 8 - (bell % 8)) % 24;
-
-            // Take Eorzea days since unix epoch
-            var totalDays = Math.Floor(unixSeconds / 4200);
             
-            // 0x64 = 100
-            var calcBase = totalDays * 100 + increment;
+            var unixSeconds = GetUnixSeconds(date);
+            var eorzeaHoursSinceUnixEpoch = unixSeconds / SecondsPerEorzeaHour;
 
-            // 0xB = 11
+            // This is done because the calculations consider 16:00 = 0, 00:00 = 8 and 08:00 = 16
+            var increment = (eorzeaHoursSinceUnixEpoch + EorzeaHoursPerWeatherWindow - (eorzeaHoursSinceUnixEpoch % EorzeaHoursPerWeatherWindow)) % HoursPerDay;
+
+            // Calculate the chance value to use for determining weather 
+            var totalEorzeanDays = Math.Floor(unixSeconds / (HoursPerDay * SecondsPerEorzeaHour));
+            var calcBase = totalEorzeanDays * 100 + increment;
             var step1 = ((uint)calcBase << 11) ^ (uint)calcBase;
             var step2 = (step1 >> 8) ^ step1;
-
-            // 0x64 = 100
-            return step2 % 100;
+            var chance = step2 % 100;
+            
+            return chance;
         }
 
         /// <summary>
@@ -796,13 +792,13 @@ namespace WeatherApp.Domain
                         return 26;
                     case "Azys Lla":
                         return 27;
-                    case "The Dravanian Forelands":
-                        return 28;
-                    case "The Dravanian Hinterlands":
-                        return 29;
-                    case "The Churning Mists":
-                        return 30;
                     case "Idyllshire":
+                        return 28;
+                    case "The Dravanian Forelands":
+                        return 29;
+                    case "The Dravanian Hinterlands":
+                        return 30;
+                    case "The Churning Mists":
                         return 31;
                     case "Rhalgr's Reach":
                         return 32;
