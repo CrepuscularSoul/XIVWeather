@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Remoting.Messaging;
 using Javax.Crypto.Spec;
 
@@ -10,6 +11,9 @@ namespace WeatherApp.Domain
     {
         public static List<WeatherChance> WeatherChances { get; }
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
+        private const int SecondsPerEorzeaHour = 175;
+        private const int EorzeaHoursPerWeatherWindow = 8;
+        private const int HoursPerDay = 24;
 
         static WeatherService()
         {
@@ -28,7 +32,7 @@ namespace WeatherApp.Domain
             var weatherStartHour = GetEorzeaHour(weatherStart);
 
             var weather = GetWeatherNameForTime(weatherStart, parameters.Zone);
-            var previousWeather = GetWeatherNameForTime(weatherStart.AddSeconds((8 * 175) * -1.0), parameters.Zone);
+            var previousWeather = GetWeatherNameForTime(weatherStart.AddSeconds((EorzeaHoursPerWeatherWindow * SecondsPerEorzeaHour) * -1.0), parameters.Zone);
 
             return GetResults(parameters, weather, previousWeather,
                 weatherStartHour, weatherStart);
@@ -51,7 +55,8 @@ namespace WeatherApp.Domain
                                    || parameters.DesiredWeather.Any(x => x == weather);
                 var previousWeatherMatch = !parameters.DesiredPreviousWeather.Any() 
                                            || parameters.DesiredPreviousWeather.Any(x => x == previousWeather);
-                var timeMatch = parameters.DesiredTimes.Any(x => weatherStartHour.ToString() == x);
+                var timeMatch = !parameters.DesiredTimes.Any() 
+                                || parameters.DesiredTimes.Any(x => weatherStartHour.ToString() == x);
                 
                 if (weatherMatch && previousWeatherMatch && timeMatch)
                 {
@@ -66,7 +71,7 @@ namespace WeatherApp.Domain
                     matches++;
                 }
 
-                weatherStart = weatherStart.AddSeconds(8 * 175);
+                weatherStart = weatherStart.AddSeconds(EorzeaHoursPerWeatherWindow * SecondsPerEorzeaHour);
                 weatherStartHour = GetEorzeaHour(weatherStart);
                 previousWeather = weather;
                 weather = GetWeatherNameForTime(weatherStart, parameters.Zone);
@@ -90,9 +95,8 @@ namespace WeatherApp.Domain
         public static int GetEorzeaHour(DateTime date)
         {
             var unixSeconds = GetUnixSeconds(date);
-            // Get Eorzea hour
-            var bell = (unixSeconds / 175) % 24;
-            return (int) Math.Floor(bell);
+            var eorzeaHour = (unixSeconds / SecondsPerEorzeaHour) % HoursPerDay;
+            return (int) Math.Floor(eorzeaHour);
         }
 
         /// <summary>
@@ -102,9 +106,9 @@ namespace WeatherApp.Domain
         {
             var unixSeconds = GetUnixSeconds(date);
             // Get Eorzea hour for weather start
-            var bell = (unixSeconds / 175) % 24;
-            var startBell = bell - (bell % 8);
-            var startUnixSeconds = unixSeconds - (175 * (bell - startBell));
+            var eorzeaHour = (unixSeconds / SecondsPerEorzeaHour) % HoursPerDay;
+            var startEorzeaHour = eorzeaHour - (eorzeaHour % EorzeaHoursPerWeatherWindow);
+            var startUnixSeconds = unixSeconds - (SecondsPerEorzeaHour * (eorzeaHour - startEorzeaHour));
             return GetDateFromSeconds(startUnixSeconds);
         }
 
@@ -114,27 +118,21 @@ namespace WeatherApp.Domain
         /// </summary>
         public static ulong CalculateForecastTarget(DateTime date) { 
             // Thanks to Rogueadyn's SaintCoinach library for this calculation.
-            // lDate is the current local time.
-
-            var unixSeconds = GetUnixSeconds(date);
-            // Get Eorzea hour for weather start
-            var bell = unixSeconds / 175;
-
-            // Do the magic 'cause for calculations 16:00 is 0, 00:00 is 8 and 08:00 is 16
-            var increment = (ulong) (bell + 8 - (bell % 8)) % 24;
-
-            // Take Eorzea days since unix epoch
-            var totalDays = Math.Floor(unixSeconds / 4200);
             
-            // 0x64 = 100
-            var calcBase = totalDays * 100 + increment;
+            var unixSeconds = GetUnixSeconds(date);
+            var eorzeaHoursSinceUnixEpoch = unixSeconds / SecondsPerEorzeaHour;
 
-            // 0xB = 11
+            // This is done because the calculations consider 16:00 = 0, 00:00 = 8 and 08:00 = 16
+            var increment = (eorzeaHoursSinceUnixEpoch + EorzeaHoursPerWeatherWindow - (eorzeaHoursSinceUnixEpoch % EorzeaHoursPerWeatherWindow)) % HoursPerDay;
+
+            // Calculate the chance value to use for determining weather 
+            var totalEorzeanDays = Math.Floor(unixSeconds / (HoursPerDay * SecondsPerEorzeaHour));
+            var calcBase = totalEorzeanDays * 100 + increment;
             var step1 = ((uint)calcBase << 11) ^ (uint)calcBase;
             var step2 = (step1 >> 8) ^ step1;
-
-            // 0x64 = 100
-            return step2 % 100;
+            var chance = step2 % 100;
+            
+            return chance;
         }
 
         /// <summary>
@@ -679,5 +677,180 @@ namespace WeatherApp.Domain
                 "Eureka Pyros"
             };
         }
+
+        /// <summary>
+        /// Returns a list of available regions
+        /// </summary>
+        public static List<string> GetRegions()
+        {
+            return new List<string>
+            {
+                "Black Shroud",
+                "La Noscea",
+                "Thanalan",
+                "Ishgard/Surrounding",
+                "Gyr Abania",
+                "Far East",
+                "Others"
+            };
+        }
+
+        /// <summary>
+        /// Get the list of zones that belong to the specified region
+        /// </summary>
+        private static List<string> GetZonesForRegion(string region)
+        {
+            var l = new List<string>();
+            switch (region.ToLower())
+            {
+                case "black shroud":
+                    l.AddRange(new [] { "Gridania", "Central Shroud", "East Shroud", "South Shroud", "North Shroud", "The Lavender Beds" });
+                    break;
+                case "la noscea":
+                    l.AddRange(new [] { "Limsa Lominsa", "Middle La Noscea", "Lower La Noscea", "Eastern La Noscea", "Western La Noscea", "Upper La Noscea", "Outer La Noscea", "Mist" });
+                    break;
+                case "thanalan":
+                    l.AddRange(new [] { "Ul'dah", "Western Thanalan", "Central Thanalan", "Eastern Thanalan", "Southern Thanalan", "Northern Thanalan", "The Goblet" });
+                    break;
+                case "ishgard/surrounding":
+                    l.AddRange(new [] { "Ishgard", "Coerthas Central Highlands", "Coerthas Western Highlands", "The Sea of Clouds", "Azys Lla", "The Dravanian Forelands", "The Dravanian Hinterlands", "The Churning Mists", "Idyllshire" });
+                    break;
+                case "gyr abania":
+                    l.AddRange(new [] { "Rhalgr's Reach", "The Fringes", "The Peaks", "The Lochs" });
+                    break;
+                case "far east":
+                    l.AddRange(new [] { "The Ruby Sea", "Yanxia", "The Azim Steppe", "Kugane" });
+                    break;
+                case "others":
+                    l.AddRange(new [] { "Mor Dhona", "Eureka Anemos", "Eureka Pagos", "Eureka Pyros" });
+                    break;
+            }
+
+            return l;
+        }
+
+        /// <summary>
+        /// returns a value for the order that the item should appear when in a list with similar items
+        /// </summary>
+        /// <param name="zone"></param>
+        /// <returns></returns>
+        private static int GetOrderForZone(string zone)
+        {
+            switch (zone)
+            {
+                    case "Limsa Lominsa":
+                        return 1;
+                    case "Middle La Noscea":
+                        return 2;
+                    case "Lower La Noscea":
+                        return 3;
+                    case "Eastern La Noscea":
+                        return 4;
+                    case "Western La Noscea":
+                        return 5;
+                    case "Upper La Noscea":
+                        return 6;
+                    case "Outer La Noscea":
+                        return 7;
+                    case "Mist":
+                        return 8;
+                    case "Gridania":
+                        return 9;
+                    case "Central Shroud":
+                        return 10;
+                    case "East Shroud":
+                        return 11;
+                    case "South Shroud":
+                        return 12;
+                    case "North Shroud":
+                        return 13;
+                    case "The Lavender Beds":
+                        return 14;
+                    case "Ul'dah":
+                        return 15;
+                    case "Western Thanalan":
+                        return 16;
+                    case "Central Thanalan":
+                        return 17;
+                    case "Eastern Thanalan":
+                        return 18;
+                    case "Southern Thanalan":
+                        return 19;
+                    case "Northern Thanalan":
+                        return 20;
+                    case "The Goblet":
+                        return 21;
+                    case "Mor Dhona":
+                        return 22;
+                    case "Ishgard":
+                        return 23;
+                    case "Coerthas Central Highlands":
+                        return 24;
+                    case "Coerthas Western Highlands":
+                        return 25;
+                    case "The Sea of Clouds":
+                        return 26;
+                    case "Azys Lla":
+                        return 27;
+                    case "Idyllshire":
+                        return 28;
+                    case "The Dravanian Forelands":
+                        return 29;
+                    case "The Dravanian Hinterlands":
+                        return 30;
+                    case "The Churning Mists":
+                        return 31;
+                    case "Rhalgr's Reach":
+                        return 32;
+                    case "The Fringes":
+                        return 33;
+                    case "The Peaks":
+                        return 34;
+                    case "The Lochs":
+                        return 35;
+                    case "The Ruby Sea":
+                        return 36;
+                    case "Yanxia":
+                        return 37;
+                    case "The Azim Steppe":
+                        return 38;
+                    case "Kugane":
+                        return 39;
+                    case "Eureka Anemos":
+                        return 40;
+                    case "Eureka Pagos":
+                        return 41;
+                    case "Eureka Pyros":
+                        return 42;
+                    default:
+                        return default;
+            }
+        }
+
+        /// <summary>
+        /// Get the upcoming weather forecast for the specified region
+        /// </summary>
+        /// <param name="region"></param>
+        /// <returns></returns>
+        public static RegionForecast GetWeatherForecastForRegion(string region)
+        {
+            var forecast = new RegionForecast(region);
+            var zones = GetZonesForRegion(region);
+            var parameters = new WeatherParameters
+            {
+                MaxMatches = 25,
+                MaxTries = 25
+            };
+            foreach (var zone in zones)
+            {
+                parameters.Zone = zone;
+                var order = GetOrderForZone(zone);
+                var results = GetUpcomingWeatherResults(parameters);
+                forecast.AddZoneForecast(zone, order, results);
+            }
+
+            return forecast;
+        }
+
     }
 }

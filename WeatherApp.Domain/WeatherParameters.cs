@@ -23,5 +23,12 @@ namespace WeatherApp.Domain
         public List<string> DesiredTimes { get; set; }
         public int MaxTries { get; set; }
         public int MaxMatches { get; set; }
+
+        public WeatherParameters()
+        {
+            DesiredPreviousWeather = new List<string>();
+            DesiredWeather = new List<string>();
+            DesiredTimes = new List<string>();
+        }
     }
 }
