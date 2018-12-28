@@ -11,9 +11,10 @@ namespace WeatherApp.Domain
     {
         public static List<WeatherChance> WeatherChances { get; }
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
-        private const int SecondsPerEorzeaHour = 175;
-        private const int EorzeaHoursPerWeatherWindow = 8;
-        private const int HoursPerDay = 24;
+        private const int SecondsPerEorzeaHour = 175,
+                          EorzeaHoursPerWeatherWindow = 8,
+                          HoursPerDay = 24,
+                          MinutesPerHour = 60;
 
         static WeatherService()
         {
@@ -79,6 +80,18 @@ namespace WeatherApp.Domain
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Given a DateTime, returns the time as a string formatted as 'hh:mm'
+        /// </summary>
+        public static string GetEorzeaTime(DateTime date)
+        {
+            var unixSeconds = GetUnixSeconds(date);
+            var eorzeaTimeDouble = unixSeconds / SecondsPerEorzeaHour;
+            var hour = (int) Math.Floor(eorzeaTimeDouble % HoursPerDay);
+            var minute = (int) (Math.Round((eorzeaTimeDouble - Math.Truncate(eorzeaTimeDouble)), 4) * MinutesPerHour);
+            return $"{(hour < 10 ? $"0{hour}" : hour.ToString())}:{(minute < 10 ? $"0{minute}" : minute.ToString())}";
         }
 
         /// <summary>
