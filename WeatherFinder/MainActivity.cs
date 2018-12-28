@@ -27,7 +27,9 @@ namespace WeatherFinder
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.drawer_layout);
             ConfigureNavigation();
-            InitializeView();
+            
+            if (FragmentManager.FindFragmentById(Resource.Id.fragment_view) == null)
+                InitializeView();
         }
 
         /// <summary>
@@ -61,7 +63,6 @@ namespace WeatherFinder
                 tran.Add(Resource.Id.fragment_view, fragment, string.Empty);
                 tran.Commit();
             }
-
         }
 
         /// <summary>
