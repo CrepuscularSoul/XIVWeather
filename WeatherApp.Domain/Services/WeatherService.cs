@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Runtime.Remoting.Messaging;
-using Javax.Crypto.Spec;
+using WeatherApp.Domain.Models;
 
-namespace WeatherApp.Domain
+namespace WeatherApp.Domain.Services
 {
     public class WeatherService
     {

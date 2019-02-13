@@ -4,8 +4,7 @@ using Android.App;
 using Android.Content;
 using Android.Util;
 using Android.Widget;
-using Java.Lang;
-using StringBuilder = System.Text.StringBuilder;
+using System.Text;
 
 namespace WeatherFinder
 {

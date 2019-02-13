@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿using System.Linq;
 using Android.App;
-using Android.Content;
 using Android.Graphics;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using WeatherApp.Domain;
+using WeatherApp.Domain.Models;
+using WeatherApp.Domain.Services;
 
 namespace WeatherFinder
 {
