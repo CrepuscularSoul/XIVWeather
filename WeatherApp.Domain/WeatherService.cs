@@ -538,6 +538,14 @@ namespace WeatherApp.Domain
                     if (chance < 64) return "Blizzards"; 
                     if (chance < 82) return "Umbral Wind"; 
                     return "Snow";
+                }),
+                new WeatherChance("Eureka Hydatos", chance =>
+                {
+                    if (chance < 12) return "Fair Skies";
+                    if (chance < 34) return "Showers";
+                    if (chance < 56) return "Gloom";
+                    if (chance < 78) return "Thunderstorms";
+                    return "Snow";
                 })
             };
         }
@@ -633,6 +641,8 @@ namespace WeatherApp.Domain
                     return new List<string> {"Clear Skies", "Fog", "Heat Waves", "Snow", "Thunder", "Blizzards"};
                 case "Eureka Pyros":
                     return new List<string> {"Fair Skies", "Heat Waves", "Thunder", "Blizzards", "Umbral Wind", "Snow"};
+                case "Eureka Hydatos":
+                    return new List<string> {"Fair Skies", "Showers", "Gloom", "Thunderstorms", "Snow"};
                 default:
                     throw new InvalidOperationException($"Zone {zone} is not yet implemented.");
             }
@@ -687,7 +697,8 @@ namespace WeatherApp.Domain
                 "Kugane",
                 "Eureka Anemos",
                 "Eureka Pagos",
-                "Eureka Pyros"
+                "Eureka Pyros",
+                "Eureka Hydatos"
             };
         }
 
@@ -735,7 +746,7 @@ namespace WeatherApp.Domain
                     l.AddRange(new [] { "The Ruby Sea", "Yanxia", "The Azim Steppe", "Kugane" });
                     break;
                 case "others":
-                    l.AddRange(new [] { "Mor Dhona", "Eureka Anemos", "Eureka Pagos", "Eureka Pyros" });
+                    l.AddRange(new [] { "Mor Dhona", "Eureka Anemos", "Eureka Pagos", "Eureka Pyros", "Eureka Hydatos" });
                     break;
             }
 
@@ -835,6 +846,8 @@ namespace WeatherApp.Domain
                         return 41;
                     case "Eureka Pyros":
                         return 42;
+                    case "Eureka Hydatos":
+                        return 43;
                     default:
                         return default;
             }

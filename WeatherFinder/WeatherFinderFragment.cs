@@ -67,12 +67,15 @@ namespace WeatherFinder
 
             var desiredElement = _view.FindViewById<MultiSelectionSpinner>(Resource.Id.DesiredSpinner);
             var previousElement = _view.FindViewById<MultiSelectionSpinner>(Resource.Id.PreviousSpinner);
-
+            var weatherTable = _view.FindViewById<TableLayout>(Resource.Id.resultsTable);
+            
             desiredElement.Items = weatherOptions;
             previousElement.Items = weatherOptions;
+            weatherTable.RemoveAllViews();
 
             desiredElement.RequestLayout();
             previousElement.RequestLayout();
+            weatherTable.RequestLayout();
         }
 
         /// <summary>
