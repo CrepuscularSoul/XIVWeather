@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-
 using Android.App;
-using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using WeatherApp.Domain;
+using WeatherApp.Domain.Models;
+using WeatherApp.Domain.Services;
 
 namespace WeatherFinder
 {
@@ -67,12 +64,15 @@ namespace WeatherFinder
 
             var desiredElement = _view.FindViewById<MultiSelectionSpinner>(Resource.Id.DesiredSpinner);
             var previousElement = _view.FindViewById<MultiSelectionSpinner>(Resource.Id.PreviousSpinner);
-
+            var weatherTable = _view.FindViewById<TableLayout>(Resource.Id.resultsTable);
+            
             desiredElement.Items = weatherOptions;
             previousElement.Items = weatherOptions;
+            weatherTable.RemoveAllViews();
 
             desiredElement.RequestLayout();
             previousElement.RequestLayout();
+            weatherTable.RequestLayout();
         }
 
         /// <summary>

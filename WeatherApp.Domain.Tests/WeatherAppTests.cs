@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
+using WeatherApp.Domain.Models;
+using WeatherApp.Domain.Services;
 
 namespace WeatherApp.Domain.Tests
 {

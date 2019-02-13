@@ -1,16 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
-
-namespace WeatherApp.Domain
+namespace WeatherApp.Domain.Models
 {
     /// <summary>
     /// Class wrapping a zone name and function for getting the weather based on a value between 0 and 100

@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.Design.Serialization;
-using System.Linq;
-using Android.App;
+﻿using Android.App;
 using Android.OS;
-using Android.Runtime;
 using Android.Support.Design.Widget;
 using Android.Support.V4.View;
 using Android.Support.V4.Widget;
 using Android.Support.V7.App;
-using Android.Support.V7.View;
 using Android.Views;
-using Android.Widget;
-using WeatherApp.Domain;
-using ActionBar = Android.App.ActionBar;
 
 namespace WeatherFinder
 {

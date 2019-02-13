@@ -9,6 +9,7 @@ _ReSharper*/
 # VS specific files
 *.vs*
 *.sln
+*.csproj.user
 
 # Build results
 [Dd]ebug/
