@@ -1,7 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Policy;
+using Android.Graphics;
 using WeatherApp.Domain.Models;
+using Weather = WeatherApp.Domain.Models.Constants.Weather;
+using Zones = WeatherApp.Domain.Models.Constants.Zones;
+using Regions = WeatherApp.Domain.Models.Constants.Regions;
 
 namespace WeatherApp.Domain.Services
 {
@@ -56,7 +61,7 @@ namespace WeatherApp.Domain.Services
                                            || parameters.DesiredPreviousWeather.Any(x => x == previousWeather);
                 var timeMatch = !parameters.DesiredTimes.Any() 
                                 || parameters.DesiredTimes.Any(x => weatherStartHour.ToString() == x);
-                
+
                 if (weatherMatch && previousWeatherMatch && timeMatch)
                 {
                     results.Add(new WeatherResult
@@ -129,7 +134,6 @@ namespace WeatherApp.Domain.Services
         /// </summary>
         public static ulong CalculateForecastTarget(DateTime date) { 
             // Thanks to Rogueadyn's SaintCoinach library for this calculation.
-            
             var unixSeconds = GetUnixSeconds(date);
             var eorzeaHoursSinceUnixEpoch = unixSeconds / SecondsPerEorzeaHour;
 
@@ -142,7 +146,7 @@ namespace WeatherApp.Domain.Services
             var step1 = ((uint)calcBase << 11) ^ (uint)calcBase;
             var step2 = (step1 >> 8) ^ step1;
             var chance = step2 % 100;
-            
+
             return chance;
         }
 
@@ -171,379 +175,441 @@ namespace WeatherApp.Domain.Services
         {
             return new List<WeatherChance>
             {
-                new WeatherChance("Limsa Lominsa", chance =>
+                new WeatherChance(Zones.LimsaLominsa, chance =>
                 {
-                    if (chance < 20) return "Clouds";
-                    if (chance < 50) return "Clear Skies";
-                    if (chance < 80) return "Fair Skies";
-                    if (chance < 90) return "Fog";
-                    return "Rain";
+                    if (chance < 20) return Weather.Clouds;
+                    if (chance < 50) return Weather.ClearSkies;
+                    if (chance < 80) return Weather.FairSkies;
+                    if (chance < 90) return Weather.Fog;
+                    return Weather.Rain;
                 }),
-                new WeatherChance("Middle La Noscea", chance =>
+                new WeatherChance(Zones.MiddleLaNoscea, chance =>
                 {
-                    if (chance < 20) return "Clouds";
-                    if (chance < 50) return "Clear Skies";
-                    if (chance < 70) return "Fair Skies";
-                    if (chance < 80) return "Wind";
-                    if (chance < 90) return "Fog";
-                    return "Rain";
+                    if (chance < 20) return Weather.Clouds;
+                    if (chance < 50) return Weather.ClearSkies;
+                    if (chance < 70) return Weather.FairSkies;
+                    if (chance < 80) return Weather.Wind;
+                    if (chance < 90) return Weather.Fog;
+                    return Weather.Rain;
                 }),
-                new WeatherChance("Lower La Noscea", chance =>
+                new WeatherChance(Zones.LowerLaNoscea, chance =>
                 {
-                    if (chance < 20) return "Clouds";
-                    if (chance < 50) return "Clear Skies";
-                    if (chance < 70) return "Fair Skies";
-                    if (chance < 80) return "Wind";
-                    if (chance < 90) return "Fog";
-                    return "Rain";
+                    if (chance < 20) return Weather.Clouds;
+                    if (chance < 50) return Weather.ClearSkies;
+                    if (chance < 70) return Weather.FairSkies;
+                    if (chance < 80) return Weather.Wind;
+                    if (chance < 90) return Weather.Fog;
+                    return Weather.Rain;
                 }),
-                new WeatherChance("Eastern La Noscea", chance =>
+                new WeatherChance(Zones.EasternLaNoscea, chance =>
                 {
-                    if (chance < 5) return "Fog";
-                    if (chance < 50) return "Clear Skies";
-                    if (chance < 80) return "Fair Skies";
-                    if (chance < 90) return "Clouds";
-                    if (chance < 95) return "Rain";
-                    return "Showers";
+                    if (chance < 5) return Weather.Fog;
+                    if (chance < 50) return Weather.ClearSkies;
+                    if (chance < 80) return Weather.FairSkies;
+                    if (chance < 90) return Weather.Clouds;
+                    if (chance < 95) return Weather.Rain;
+                    return Weather.Showers;
                 }),
-                new WeatherChance("Western La Noscea", chance =>
+                new WeatherChance(Zones.WesternLaNoscea, chance =>
                 {
-                    if (chance < 10) return "Fog";
-                    if (chance < 40) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 80) return "Clouds";
-                    if (chance < 90) return "Wind";
-                    return "Gales";
+                    if (chance < 10) return Weather.Fog;
+                    if (chance < 40) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 80) return Weather.Clouds;
+                    if (chance < 90) return Weather.Wind;
+                    return Weather.Gales;
                 }),
-                new WeatherChance("Upper La Noscea", chance =>
+                new WeatherChance(Zones.UpperLaNoscea, chance =>
                 {
-                    if (chance < 30) return "Clear Skies";
-                    if (chance < 50) return "Fair Skies";
-                    if (chance < 70) return "Clouds";
-                    if (chance < 80) return "Fog";
-                    if (chance < 90) return "Thunder";
-                    return "Thunderstorms";
+                    if (chance < 30) return Weather.ClearSkies;
+                    if (chance < 50) return Weather.FairSkies;
+                    if (chance < 70) return Weather.Clouds;
+                    if (chance < 80) return Weather.Fog;
+                    if (chance < 90) return Weather.Thunder;
+                    return Weather.Thunderstorms;
                 }),
-                new WeatherChance("Outer La Noscea", chance =>
+                new WeatherChance(Zones.OuterLaNoscea, chance =>
                 {
-                    if (chance < 30) return "Clear Skies";
-                    if (chance < 50) return "Fair Skies";
-                    if (chance < 70) return "Clouds";
-                    if (chance < 85) return "Fog";
-                    return "Rain"; 
+                    if (chance < 30) return Weather.ClearSkies;
+                    if (chance < 50) return Weather.FairSkies;
+                    if (chance < 70) return Weather.Clouds;
+                    if (chance < 85) return Weather.Fog;
+                    return Weather.Rain; 
                 }),
-                new WeatherChance("Mist", chance =>
+                new WeatherChance(Zones.Mist, chance =>
                 {
-                    if (chance < 20) return "Clouds";
-                    if (chance < 50) return "Clear Skies";
+                    if (chance < 20) return Weather.Clouds;
+                    if (chance < 50) return Weather.ClearSkies;
                     //NOTE - This double of fair is how it was in the source JS file
-                    //if (chance < 70) return "Fair Skies";
-                    if (chance < 80) return "Fair Skies";
-                    if (chance < 90) return "Fog";
-                    return "Rain";
+                    //if (chance < 70) return Weather.FairSkies;
+                    if (chance < 80) return Weather.FairSkies;
+                    if (chance < 90) return Weather.Fog;
+                    return Weather.Rain;
                 }),
-                new WeatherChance("Gridania", chance =>
+                new WeatherChance(Zones.Gridania, chance =>
                 {
                     //NOTE - This double of Rain is how it was in the source JS file
-                    //if (chance < 5) return "Rain";
-                    if (chance < 20) return "Rain";
-                    if (chance < 30) return "Fog";
-                    if (chance < 40) return "Clouds";
-                    if (chance < 55) return "Fair Skies";
-                    if (chance < 85) return "Clear Skies";
-                    return "Fair Skies";
+                    //if (chance < 5) return Weather.Rain;
+                    if (chance < 20) return Weather.Rain;
+                    if (chance < 30) return Weather.Fog;
+                    if (chance < 40) return Weather.Clouds;
+                    if (chance < 55) return Weather.FairSkies;
+                    if (chance < 85) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("Central Shroud", chance =>
+                new WeatherChance(Zones.CentralShroud, chance =>
                 {
-                    if (chance < 5) return "Thunder";
-                    if (chance < 20) return "Rain";
-                    if (chance < 30) return "Fog";
-                    if (chance < 40) return "Clouds";
-                    if (chance < 55) return "Fair Skies";
-                    if (chance < 85) return "Clear Skies";
-                    return "Fair Skies";
+                    if (chance < 5) return Weather.Thunder;
+                    if (chance < 20) return Weather.Rain;
+                    if (chance < 30) return Weather.Fog;
+                    if (chance < 40) return Weather.Clouds;
+                    if (chance < 55) return Weather.FairSkies;
+                    if (chance < 85) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("East Shroud", chance =>
+                new WeatherChance(Zones.EastShroud, chance =>
                 {
-                    if (chance < 5) return "Thunder";
-                    if (chance < 20) return "Rain";
-                    if (chance < 30) return "Fog";
-                    if (chance < 40) return "Clouds";
-                    if (chance < 55) return "Fair Skies";
-                    if (chance < 85) return "Clear Skies";
-                    return "Fair Skies";
+                    if (chance < 5) return Weather.Thunder;
+                    if (chance < 20) return Weather.Rain;
+                    if (chance < 30) return Weather.Fog;
+                    if (chance < 40) return Weather.Clouds;
+                    if (chance < 55) return Weather.FairSkies;
+                    if (chance < 85) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("South Shroud", chance =>
+                new WeatherChance(Zones.SouthShroud, chance =>
                 {
-                    if (chance < 5) return "Fog";
-                    if (chance < 10) return "Thunderstorms";
-                    if (chance < 25) return "Thunder";
-                    if (chance < 30) return "Fog";
-                    if (chance < 40) return "Clouds";
-                    if (chance < 70) return "Fair Skies";
-                    return "Clear Skies";
+                    if (chance < 5) return Weather.Fog;
+                    if (chance < 10) return Weather.Thunderstorms;
+                    if (chance < 25) return Weather.Thunder;
+                    if (chance < 30) return Weather.Fog;
+                    if (chance < 40) return Weather.Clouds;
+                    if (chance < 70) return Weather.FairSkies;
+                    return Weather.ClearSkies;
                 }),
-                new WeatherChance("North Shroud", chance =>
+                new WeatherChance(Zones.NorthShroud, chance =>
                 {
-                    if (chance < 5) return "Fog";
-                    if (chance < 10) return "Showers";
-                    if (chance < 25) return "Rain";
-                    if (chance < 30) return "Fog";
-                    if (chance < 40) return "Clouds";
-                    if (chance < 70) return "Fair Skies";
-                    return "Clear Skies";
+                    if (chance < 5) return Weather.Fog;
+                    if (chance < 10) return Weather.Showers;
+                    if (chance < 25) return Weather.Rain;
+                    if (chance < 30) return Weather.Fog;
+                    if (chance < 40) return Weather.Clouds;
+                    if (chance < 70) return Weather.FairSkies;
+                    return Weather.ClearSkies;
                 }),
-                new WeatherChance("The Lavender Beds", chance =>
+                new WeatherChance(Zones.LavenderBeds, chance =>
                 {
-                    if (chance < 5) return "Clouds";
-                    if (chance < 20) return "Rain";
-                    if (chance < 30) return "Fog";
-                    if (chance < 40) return "Clouds";
-                    if (chance < 55) return "Fair Skies";
-                    if (chance < 85) return "Clear Skies";
-                    return "Fair Skies";
+                    if (chance < 5) return Weather.Clouds;
+                    if (chance < 20) return Weather.Rain;
+                    if (chance < 30) return Weather.Fog;
+                    if (chance < 40) return Weather.Clouds;
+                    if (chance < 55) return Weather.FairSkies;
+                    if (chance < 85) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("Ul'dah", chance =>
+                new WeatherChance(Zones.Uldah, chance =>
                 {
-                    if (chance < 40) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 85) return "Clouds";
-                    if (chance < 95) return "Fog";
-                    return "Rain";
+                    if (chance < 40) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 85) return Weather.Clouds;
+                    if (chance < 95) return Weather.Fog;
+                    return Weather.Rain;
                 }),
-                new WeatherChance("Western Thanalan", chance =>
+                new WeatherChance(Zones.WesternThanalan, chance =>
                 {
-                    if (chance < 40) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 85) return "Clouds";
-                    if (chance < 95) return "Fog";
-                    return "Rain";
+                    if (chance < 40) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 85) return Weather.Clouds;
+                    if (chance < 95) return Weather.Fog;
+                    return Weather.Rain;
                 }),
-                new WeatherChance("Central Thanalan", chance =>
+                new WeatherChance(Zones.CentralThanalan, chance =>
                 {
-                    if (chance < 15) return "Dust Storms";
-                    if (chance < 55) return "Clear Skies";
-                    if (chance < 75) return "Fair Skies";
-                    if (chance < 85) return "Clouds";
-                    if (chance < 95) return "Fog";
-                    return "Rain";
+                    if (chance < 15) return Weather.DustStorms;
+                    if (chance < 55) return Weather.ClearSkies;
+                    if (chance < 75) return Weather.FairSkies;
+                    if (chance < 85) return Weather.Clouds;
+                    if (chance < 95) return Weather.Fog;
+                    return Weather.Rain;
                 }),
-                new WeatherChance("Eastern Thanalan", chance =>
+                new WeatherChance(Zones.EasternThanalan, chance =>
                 {
-                    if (chance < 40) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 70) return "Clouds";
-                    if (chance < 80) return "Fog";
-                    if (chance < 85) return "Rain";
-                    return "Showers";
+                    if (chance < 40) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 70) return Weather.Clouds;
+                    if (chance < 80) return Weather.Fog;
+                    if (chance < 85) return Weather.Rain;
+                    return Weather.Showers;
                 }),
-                new WeatherChance("Southern Thanalan", chance =>
+                new WeatherChance(Zones.SouthernThanalan, chance =>
                 {
-                    if (chance < 20) return "Heat Waves";
-                    if (chance < 60) return "Clear Skies";
-                    if (chance < 80) return "Fair Skies";
-                    if (chance < 90) return "Clouds";
-                    return "Fog";
+                    if (chance < 20) return Weather.HeatWaves;
+                    if (chance < 60) return Weather.ClearSkies;
+                    if (chance < 80) return Weather.FairSkies;
+                    if (chance < 90) return Weather.Clouds;
+                    return Weather.Fog;
                 }),
-                new WeatherChance("Northern Thanalan", chance =>
+                new WeatherChance(Zones.NorthernThanalan, chance =>
                 {
-                    if (chance < 5) return "Clear Skies";
-                    if (chance < 20) return "Fair Skies";
-                    if (chance < 50) return "Clouds";
-                    return "Fog";
+                    if (chance < 5) return Weather.ClearSkies;
+                    if (chance < 20) return Weather.FairSkies;
+                    if (chance < 50) return Weather.Clouds;
+                    return Weather.Fog;
                 }),
-                new WeatherChance("The Goblet", chance =>
+                new WeatherChance(Zones.Goblet, chance =>
                 {
-                    if (chance < 40) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 85) return "Clouds";
-                    if (chance < 95) return "Fog";
-                    return "Rain";
+                    if (chance < 40) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 85) return Weather.Clouds;
+                    if (chance < 95) return Weather.Fog;
+                    return Weather.Rain;
                 }),
-                new WeatherChance("Mor Dhona", chance =>
+                new WeatherChance(Zones.MorDhona, chance =>
                 {
-                    if (chance < 15) return "Clouds";
-                    if (chance < 30) return "Fog";
-                    if (chance < 60) return "Gloom";
-                    if (chance < 75) return "Clear Skies";
-                    return "Fair Skies";
+                    if (chance < 15) return Weather.Clouds;
+                    if (chance < 30) return Weather.Fog;
+                    if (chance < 60) return Weather.Gloom;
+                    if (chance < 75) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("Ishgard", chance =>
+                new WeatherChance(Zones.Ishgard, chance =>
                 {
-                    if (chance < 60) return "Snow";
-                    if (chance < 70) return "Fair Skies";
-                    if (chance < 75) return "Clear Skies";
-                    if (chance < 90) return "Clouds";
-                    return "Fog";
+                    if (chance < 60) return Weather.Snow;
+                    if (chance < 70) return Weather.FairSkies;
+                    if (chance < 75) return Weather.ClearSkies;
+                    if (chance < 90) return Weather.Clouds;
+                    return Weather.Fog;
                 }),
-                new WeatherChance("Coerthas Central Highlands", chance =>
+                new WeatherChance(Zones.CoerthasCentralHighlands, chance =>
                 {
-                    if (chance < 20) return "Blizzards";
-                    if (chance < 60) return "Snow";
-                    if (chance < 70) return "Fair Skies";
-                    if (chance < 75) return "Clear Skies";
-                    if (chance < 90) return "Clouds";
-                    return "Fog";
+                    if (chance < 20) return Weather.Blizzards;
+                    if (chance < 60) return Weather.Snow;
+                    if (chance < 70) return Weather.FairSkies;
+                    if (chance < 75) return Weather.ClearSkies;
+                    if (chance < 90) return Weather.Clouds;
+                    return Weather.Fog;
                 }),
-                new WeatherChance("Coerthas Western Highlands", chance =>
+                new WeatherChance(Zones.CoerthasWesternHighlands, chance =>
                 {
-                    if (chance < 20) return "Blizzards";
-                    if (chance < 60) return "Snow";
-                    if (chance < 70) return "Fair Skies";
-                    if (chance < 75) return "Clear Skies";
-                    if (chance < 90) return "Clouds";
-                    return "Fog";
+                    if (chance < 20) return Weather.Blizzards;
+                    if (chance < 60) return Weather.Snow;
+                    if (chance < 70) return Weather.FairSkies;
+                    if (chance < 75) return Weather.ClearSkies;
+                    if (chance < 90) return Weather.Clouds;
+                    return Weather.Fog;
                 }),
-                new WeatherChance("The Sea of Clouds", chance =>
+                new WeatherChance(Zones.SeaOfClouds, chance =>
                 {
-                    if (chance < 30) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 70) return "Clouds";
-                    if (chance < 80) return "Fog";
-                    if (chance < 90) return "Wind";
-                    return "Umbral Wind";
+                    if (chance < 30) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 70) return Weather.Clouds;
+                    if (chance < 80) return Weather.Fog;
+                    if (chance < 90) return Weather.Wind;
+                    return Weather.UmbralWind;
                 }),
-                new WeatherChance("Azys Lla", chance =>
+                new WeatherChance(Zones.AzysLla, chance =>
                 {
-                    if (chance < 35) return "Fair Skies";
-                    if (chance < 70) return "Clouds";
-                    return "Thunder";
+                    if (chance < 35) return Weather.FairSkies;
+                    if (chance < 70) return Weather.Clouds;
+                    return Weather.Thunder;
                 }),
-                new WeatherChance("The Dravanian Forelands", chance =>
+                new WeatherChance(Zones.DravanianForelands, chance =>
                 {
-                    if (chance < 10) return "Clouds";
-                    if (chance < 20) return "Fog";
-                    if (chance < 30) return "Thunder";
-                    if (chance < 40) return "Dust Storms";
-                    if (chance < 70) return "Clear Skies";
-                    return "Fair Skies";
+                    if (chance < 10) return Weather.Clouds;
+                    if (chance < 20) return Weather.Fog;
+                    if (chance < 30) return Weather.Thunder;
+                    if (chance < 40) return Weather.DustStorms;
+                    if (chance < 70) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("The Dravanian Hinterlands", chance =>
+                new WeatherChance(Zones.DravanianHinterlands, chance =>
                 {
-                    if (chance < 10) return "Clouds";
-                    if (chance < 20) return "Fog";
-                    if (chance < 30) return "Rain";
-                    if (chance < 40) return "Showers";
-                    if (chance < 70) return "Clear Skies";
-                    return "Fair Skies";
+                    if (chance < 10) return Weather.Clouds;
+                    if (chance < 20) return Weather.Fog;
+                    if (chance < 30) return Weather.Rain;
+                    if (chance < 40) return Weather.Showers;
+                    if (chance < 70) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("The Churning Mists", chance =>
+                new WeatherChance(Zones.ChurningMists, chance =>
                 {
-                    if (chance < 10) return "Clouds";
-                    if (chance < 20) return "Gales";
-                    if (chance < 40) return "Umbral Static";
-                    if (chance < 70) return "Clear Skies";
-                    return "Fair Skies";
+                    if (chance < 10) return Weather.Clouds;
+                    if (chance < 20) return Weather.Gales;
+                    if (chance < 40) return Weather.UmbralStatic;
+                    if (chance < 70) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("Idyllshire", chance =>
+                new WeatherChance(Zones.Idyllshire, chance =>
                 {
-                    if (chance < 10) return "Clouds";
-                    if (chance < 20) return "Fog";
-                    if (chance < 30) return "Rain";
-                    if (chance < 40) return "Showers";
-                    if (chance < 70) return "Clear Skies";
-                    return "Fair Skies";
+                    if (chance < 10) return Weather.Clouds;
+                    if (chance < 20) return Weather.Fog;
+                    if (chance < 30) return Weather.Rain;
+                    if (chance < 40) return Weather.Showers;
+                    if (chance < 70) return Weather.ClearSkies;
+                    return Weather.FairSkies;
                 }),
-                new WeatherChance("Rhalgr's Reach", chance =>
+                new WeatherChance(Zones.RhalgrsReach, chance =>
                 {
-                    if (chance < 15) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 80) return "Clouds";
-                    if (chance < 90) return "Fog";
-                    return "Thunder";
+                    if (chance < 15) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 80) return Weather.Clouds;
+                    if (chance < 90) return Weather.Fog;
+                    return Weather.Thunder;
                 }),
-                new WeatherChance("The Fringes", chance =>
+                new WeatherChance(Zones.Fringes, chance =>
                 {
-                    if (chance < 15) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 80) return "Clouds";
-                    if (chance < 90) return "Fog";
-                    return "Thunder";
+                    if (chance < 15) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 80) return Weather.Clouds;
+                    if (chance < 90) return Weather.Fog;
+                    return Weather.Thunder;
                 }),
-                new WeatherChance("The Peaks", chance =>
+                new WeatherChance(Zones.Peaks, chance =>
                 {
-                    if (chance < 10) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 75) return "Clouds";
-                    if (chance < 85) return "Fog";
-                    if (chance < 95) return "Wind";
-                    return "Dust Storms";
+                    if (chance < 10) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 75) return Weather.Clouds;
+                    if (chance < 85) return Weather.Fog;
+                    if (chance < 95) return Weather.Wind;
+                    return Weather.DustStorms;
                 }),
-                new WeatherChance("The Lochs", chance =>
+                new WeatherChance(Zones.Lochs, chance =>
                 {
-                    if (chance < 20) return "Clear Skies";
-                    if (chance < 60) return "Fair Skies";
-                    if (chance < 80) return "Clouds";
-                    if (chance < 90) return "Fog";
-                    return "Thunderstorms";
+                    if (chance < 20) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 80) return Weather.Clouds;
+                    if (chance < 90) return Weather.Fog;
+                    return Weather.Thunderstorms;
                 }),
-                new WeatherChance("Kugane", chance =>
+                new WeatherChance(Zones.Kugane, chance =>
                 {
-                    if (chance < 10) return "Rain";
-                    if (chance < 20) return "Fog";
-                    if (chance < 40) return "Clouds";
-                    if (chance < 80) return "Fair Skies";
-                    return "Clear Skies";
+                    if (chance < 10) return Weather.Rain;
+                    if (chance < 20) return Weather.Fog;
+                    if (chance < 40) return Weather.Clouds;
+                    if (chance < 80) return Weather.FairSkies;
+                    return Weather.ClearSkies;
                 }),
-                new WeatherChance("The Ruby Sea", chance =>
+                new WeatherChance(Zones.RubySea, chance =>
                 {
-                    if (chance < 10) return "Thunder";
-                    if (chance < 20) return "Wind";
-                    if (chance < 35) return "Clouds";
-                    if (chance < 75) return "Fair Skies";
-                    return "Clear Skies";
+                    if (chance < 10) return Weather.Thunder;
+                    if (chance < 20) return Weather.Wind;
+                    if (chance < 35) return Weather.Clouds;
+                    if (chance < 75) return Weather.FairSkies;
+                    return Weather.ClearSkies;
                 }),
-                new WeatherChance("Yanxia", chance =>
+                new WeatherChance(Zones.Yanxia, chance =>
                 {
-                    if (chance < 5) return "Showers";
-                    if (chance < 15) return "Rain";
-                    if (chance < 25) return "Fog";
-                    if (chance < 40) return "Clouds";
-                    if (chance < 80) return "Fair Skies";
-                    return "Clear Skies";
+                    if (chance < 5) return Weather.Showers;
+                    if (chance < 15) return Weather.Rain;
+                    if (chance < 25) return Weather.Fog;
+                    if (chance < 40) return Weather.Clouds;
+                    if (chance < 80) return Weather.FairSkies;
+                    return Weather.ClearSkies;
                 }),
-                new WeatherChance("The Azim Steppe", chance =>
+                new WeatherChance(Zones.AzimSteppe, chance =>
                 {
-                    if (chance < 5) return "Gales"; 
-                    if (chance < 10) return "Wind"; 
-                    if (chance < 17) return "Rain"; 
-                    if (chance < 25) return "Fog"; 
-                    if (chance < 35) return "Clouds"; 
-                    if (chance < 75) return "Fair Skies"; 
-                    return "Clear Skies"; 
+                    if (chance < 5) return Weather.Gales;
+                    if (chance < 10) return Weather.Wind;
+                    if (chance < 17) return Weather.Rain;
+                    if (chance < 25) return Weather.Fog;
+                    if (chance < 35) return Weather.Clouds;
+                    if (chance < 75) return Weather.FairSkies;
+                    return Weather.ClearSkies;
                 }),
-                new WeatherChance("Eureka Anemos", chance =>
+                new WeatherChance(Zones.EurekaAnemos, chance =>
                 {
-                    if (chance < 30) return "Fair Skies";
-                    if (chance < 60) return "Gales";
-                    if (chance < 90) return "Showers";
-                    return "Snow";
+                    if (chance < 30) return Weather.FairSkies;
+                    if (chance < 60) return Weather.Gales;
+                    if (chance < 90) return Weather.Showers;
+                    return Weather.Snow;
                 }),
-                new WeatherChance("Eureka Pagos", chance =>
+                new WeatherChance(Zones.EurekaPagos, chance =>
                 {
-                    if (chance < 10) return "Clear Skies";
-                    if (chance < 28) return "Fog";
-                    if (chance < 46) return "Heat Waves";
-                    if (chance < 64) return "Snow";
-                    if (chance < 82) return "Thunder";
-                    return "Blizzards";
+                    if (chance < 10) return Weather.ClearSkies;
+                    if (chance < 28) return Weather.Fog;
+                    if (chance < 46) return Weather.HeatWaves;
+                    if (chance < 64) return Weather.Snow;
+                    if (chance < 82) return Weather.Thunder;
+                    return Weather.Blizzards;
                 }),
-                new WeatherChance("Eureka Pyros", chance =>
+                new WeatherChance(Zones.EurekaPyros, chance =>
                 {
-                    if (chance < 10) return "Fair Skies"; 
-                    if (chance < 28) return "Heat Waves"; 
-                    if (chance < 46) return "Thunder"; 
-                    if (chance < 64) return "Blizzards"; 
-                    if (chance < 82) return "Umbral Wind"; 
-                    return "Snow";
+                    if (chance < 10) return Weather.FairSkies;
+                    if (chance < 28) return Weather.HeatWaves;
+                    if (chance < 46) return Weather.Thunder;
+                    if (chance < 64) return Weather.Blizzards;
+                    if (chance < 82) return Weather.UmbralWind;
+                    return Weather.Snow;
                 }),
-                new WeatherChance("Eureka Hydatos", chance =>
+                new WeatherChance(Zones.EurekaHydatos, chance =>
                 {
-                    if (chance < 12) return "Fair Skies";
-                    if (chance < 34) return "Showers";
-                    if (chance < 56) return "Gloom";
-                    if (chance < 78) return "Thunderstorms";
-                    return "Snow";
+                    if (chance < 12) return Weather.FairSkies;
+                    if (chance < 34) return Weather.Showers;
+                    if (chance < 56) return Weather.Gloom;
+                    if (chance < 78) return Weather.Thunderstorms;
+                    return Weather.Snow;
+                }),
+                new WeatherChance(Zones.Crystarium, chance =>
+                {
+                    if (chance < 20) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 75) return Weather.Clouds;
+                    if (chance < 85) return Weather.Fog;
+                    if (chance < 95) return Weather.Rain;
+                    return Weather.Thunderstorms;
+                }),
+                new WeatherChance(Zones.Eulmore, chance =>
+                {
+                    if (chance < 10) return Weather.Gales;
+                    if (chance < 20) return Weather.Rain;
+                    if (chance < 30) return Weather.Fog;
+                    if (chance < 45) return Weather.Clouds;
+                    if (chance < 85) return Weather.FairSkies;
+                    return Weather.ClearSkies;
+                }),
+                new WeatherChance(Zones.Lakeland, chance =>
+                {
+                    if (chance < 20) return Weather.ClearSkies;
+                    if (chance < 60) return Weather.FairSkies;
+                    if (chance < 75) return Weather.Clouds;
+                    if (chance < 85) return Weather.Fog;
+                    if (chance < 95) return Weather.Rain;
+                    return Weather.Thunderstorms;
+                }),
+                new WeatherChance(Zones.Kholusia, chance =>
+                {
+                    if (chance < 10) return Weather.Gales;
+                    if (chance < 20) return Weather.Rain;
+                    if (chance < 35) return Weather.Fog;
+                    if (chance < 45) return Weather.Clouds;
+                    if (chance < 85) return Weather.FairSkies;
+                    return Weather.ClearSkies;
+                }),
+                new WeatherChance(Zones.AmhAraeng, chance =>
+                {
+                    if (chance < 45) return Weather.FairSkies;
+                    if (chance < 60) return Weather.Clouds;
+                    if (chance < 70) return Weather.DustStorms;
+                    if (chance < 80) return Weather.HeatWaves;
+                    return Weather.ClearSkies;
+                }),
+                new WeatherChance(Zones.IlMheg, chance =>
+                {
+                    if (chance < 10) return Weather.Rain;
+                    if (chance < 20) return Weather.Fog;
+                    if (chance < 35) return Weather.Clouds;
+                    if (chance < 45) return Weather.Thunderstorms;
+                    if (chance < 60) return Weather.ClearSkies;
+                    return Weather.FairSkies;
+                }),
+                new WeatherChance(Zones.RaktikaGreatwood, chance =>
+                {
+                    if (chance < 10) return Weather.Fog;
+                    if (chance < 20) return Weather.Rain;
+                    if (chance < 30) return Weather.UmbralWind;
+                    if (chance < 45) return Weather.ClearSkies;
+                    if (chance < 85) return Weather.FairSkies;
+                    return Weather.Clouds;
                 })
             };
         }
@@ -555,92 +621,106 @@ namespace WeatherApp.Domain.Services
         {
             switch (zone)
             {
-                case "Limsa Lominsa": 
-                    return new List<string> {"Clouds","Clear Skies","Fair Skies","Fog","Rain"};
-                case "Middle La Noscea": 
-                    return new List<string> {"Clouds","Clear Skies","Fair Skies","Wind","Fog","Rain"};
-                case "Lower La Noscea": 
-                    return new List<string> {"Clouds","Clear Skies","Fair Skies","Wind","Fog","Rain"};
-                case "Eastern La Noscea": 
-                    return new List<string> {"Fog","Clear Skies","Fair Skies","Clouds","Rain","Showers"};
-                case "Western La Noscea": 
-                    return new List<string> {"Fog","Clear Skies","Fair Skies","Clouds","Wind","Gales"};
-                case "Upper La Noscea": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Thunder","Thunderstorms"};
-                case "Outer La Noscea": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Rain" };
-                case "Mist": 
-                    return new List<string> {"Clouds","Clear Skies","Fair Skies","Fog","Rain" };
-                case "Gridania": 
-                    return new List<string> {"Rain","Fog","Clouds","Fair Skies","Clear Skies"};
-                case "Central Shroud": 
-                    return new List<string> {"Thunder","Rain","Fog","Clouds","Fair Skies","Clear Skies"};
-                case "East Shroud": 
-                    return new List<string> {"Thunder","Rain","Fog","Clouds","Fair Skies","Clear Skies"};
-                case "South Shroud": 
-                    return new List<string> {"Fog","Thunderstorms","Thunder","Clouds","Fair Skies","Clear Skies"};
-                case "North Shroud": 
-                    return new List<string> {"Fog","Showers","Rain","Clouds","Fair Skies","Clear Skies"};
-                case "The Lavender Beds":
-                    return new List<string> {"Clouds","Rain","Fog","Fair Skies","Clear Skies"};
-                case "Ul'dah": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Rain"};
-                case "Western Thanalan": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Rain"};
-                case "Central Thanalan": 
-                    return new List<string> {"Dust Storms","Clear Skies","Fair Skies","Clouds","Fog","Rain"};
-                case "Eastern Thanalan": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Rain","Showers"};
-                case "Southern Thanalan": 
-                    return new List<string> {"Heat Waves","Clear Skies","Fair Skies","Clouds","Fog"};
-                case "Northern Thanalan": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog"};
-                case "The Goblet": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Rain"};
-                case "Mor Dhona": 
-                    return new List<string> {"Clouds", "Fog", "Gloom", "Clear Skies", "Fair Skies"};
-                case "Ishgard": 
-                    return new List<string> {"Snow", "Fair Skies", "Clear Skies", "Clouds", "Fog"};
-                case "Coerthas Central Highlands": 
-                    return new List<string> {"Blizzards", "Snow", "Fair Skies", "Clear Skies", "Clouds", "Fog"};
-                case "Coerthas Western Highlands": 
-                    return new List<string> {"Blizzards", "Snow", "Fair Skies", "Clear Skies", "Clouds", "Fog"};
-                case "The Sea of Clouds": 
-                    return new List<string> {"Clear Skies", "Fair Skies", "Clouds", "Fog", "Wind", "Umbral Wind"};
-                case "Azys Lla": 
-                    return new List<string> {"Fair Skies", "Clouds", "Thunder"};
-                case "The Dravanian Forelands": 
-                    return new List<string> {"Clouds", "Fog", "Thunder", "Dust Storms", "Clear Skies", "Fair Skies"};
-                case "The Dravanian Hinterlands": 
-                    return new List<string> {"Clouds", "Fog", "Rain", "Showers", "Clear Skies", "Fair Skies"};
-                case "The Churning Mists": 
-                    return new List<string> {"Clouds", "Gales", "Umbral Static", "Clear Skies", "Fair Skies"};
-                case "Idyllshire": 
-                    return new List<string> {"Clouds", "Fog", "Rain", "Showers", "Clear Skies", "Fair Skies"};
-                case "Rhalgr's Reach": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Thunder"};
-                case "The Fringes": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Thunder"};
-                case "The Peaks": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Wind","Dust Storms"};
-                case "The Lochs": 
-                    return new List<string> {"Clear Skies","Fair Skies","Clouds","Fog","Thunderstorms"};
-                case "Kugane": 
-                    return new List<string> {"Rain","Fog","Clouds","Fair Skies","Clear Skies"};
-                case "The Ruby Sea": 
-                    return new List<string> {"Thunder","Wind","Clouds","Fair Skies","Clear Skies"};
-                case "Yanxia": 
-                    return new List<string> {"Showers","Rain","Fog","Clouds","Fair Skies","Clear Skies"};
-                case "The Azim Steppe": 
-                    return new List<string> {"Gales","Wind","Rain","Fog","Clouds","Fair Skies","Clear Skies"};
-                case "Eureka Anemos": 
-                    return new List<string> {"Fair Skies", "Gales", "Showers", "Snow"};
-                case "Eureka Pagos":
-                    return new List<string> {"Clear Skies", "Fog", "Heat Waves", "Snow", "Thunder", "Blizzards"};
-                case "Eureka Pyros":
-                    return new List<string> {"Fair Skies", "Heat Waves", "Thunder", "Blizzards", "Umbral Wind", "Snow"};
-                case "Eureka Hydatos":
-                    return new List<string> {"Fair Skies", "Showers", "Gloom", "Thunderstorms", "Snow"};
+                case Zones.LimsaLominsa:
+                    return new List<string> {Weather.Clouds,Weather.ClearSkies,Weather.FairSkies,Weather.Fog,Weather.Rain};
+                case Zones.MiddleLaNoscea:
+                    return new List<string> {Weather.Clouds,Weather.ClearSkies,Weather.FairSkies,Weather.Wind,Weather.Fog,Weather.Rain};
+                case Zones.LowerLaNoscea:
+                    return new List<string> {Weather.Clouds,Weather.ClearSkies,Weather.FairSkies,Weather.Wind,Weather.Fog,Weather.Rain};
+                case Zones.EasternLaNoscea:
+                    return new List<string> {Weather.Fog,Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Rain,Weather.Showers};
+                case Zones.WesternLaNoscea:
+                    return new List<string> {Weather.Fog,Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Wind,Weather.Gales};
+                case Zones.UpperLaNoscea:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Thunder,Weather.Thunderstorms};
+                case Zones.OuterLaNoscea:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Rain };
+                case Zones.Mist:
+                    return new List<string> {Weather.Clouds,Weather.ClearSkies,Weather.FairSkies,Weather.Fog,Weather.Rain };
+                case Zones.Gridania:
+                    return new List<string> {Weather.Rain,Weather.Fog,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.CentralShroud:
+                    return new List<string> {Weather.Thunder,Weather.Rain,Weather.Fog,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.EastShroud:
+                    return new List<string> {Weather.Thunder,Weather.Rain,Weather.Fog,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.SouthShroud:
+                    return new List<string> {Weather.Fog,Weather.Thunderstorms,Weather.Thunder,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.NorthShroud:
+                    return new List<string> {Weather.Fog,Weather.Showers,Weather.Rain,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.LavenderBeds:
+                    return new List<string> {Weather.Clouds,Weather.Rain,Weather.Fog,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.Uldah:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Rain};
+                case Zones.WesternThanalan:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Rain};
+                case Zones.CentralThanalan:
+                    return new List<string> {Weather.DustStorms,Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Rain};
+                case Zones.EasternThanalan:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Rain,Weather.Showers};
+                case Zones.SouthernThanalan:
+                    return new List<string> {Weather.HeatWaves,Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog};
+                case Zones.NorthernThanalan:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog};
+                case Zones.Goblet:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Rain};
+                case Zones.MorDhona:
+                    return new List<string> {Weather.Clouds, Weather.Fog, Weather.Gloom, Weather.ClearSkies, Weather.FairSkies};
+                case Zones.Ishgard:
+                    return new List<string> {Weather.Snow, Weather.FairSkies, Weather.ClearSkies, Weather.Clouds, Weather.Fog};
+                case Zones.CoerthasCentralHighlands:
+                    return new List<string> {Weather.Blizzards, Weather.Snow, Weather.FairSkies, Weather.ClearSkies, Weather.Clouds, Weather.Fog};
+                case Zones.CoerthasWesternHighlands:
+                    return new List<string> {Weather.Blizzards, Weather.Snow, Weather.FairSkies, Weather.ClearSkies, Weather.Clouds, Weather.Fog};
+                case Zones.SeaOfClouds:
+                    return new List<string> {Weather.ClearSkies, Weather.FairSkies, Weather.Clouds, Weather.Fog, Weather.Wind, Weather.UmbralWind};
+                case Zones.AzysLla:
+                    return new List<string> {Weather.FairSkies, Weather.Clouds, Weather.Thunder};
+                case Zones.DravanianForelands:
+                    return new List<string> {Weather.Clouds, Weather.Fog, Weather.Thunder, Weather.DustStorms, Weather.ClearSkies, Weather.FairSkies};
+                case Zones.DravanianHinterlands:
+                    return new List<string> {Weather.Clouds, Weather.Fog, Weather.Rain, Weather.Showers, Weather.ClearSkies, Weather.FairSkies};
+                case Zones.ChurningMists:
+                    return new List<string> {Weather.Clouds, Weather.Gales, Weather.UmbralStatic, Weather.ClearSkies, Weather.FairSkies};
+                case Zones.Idyllshire:
+                    return new List<string> {Weather.Clouds, Weather.Fog, Weather.Rain, Weather.Showers, Weather.ClearSkies, Weather.FairSkies};
+                case Zones.RhalgrsReach:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Thunder};
+                case Zones.Fringes:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Thunder};
+                case Zones.Peaks:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Wind,Weather.DustStorms};
+                case Zones.Lochs:
+                    return new List<string> {Weather.ClearSkies,Weather.FairSkies,Weather.Clouds,Weather.Fog,Weather.Thunderstorms};
+                case Zones.Kugane:
+                    return new List<string> {Weather.Rain,Weather.Fog,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.RubySea:
+                    return new List<string> {Weather.Thunder,Weather.Wind,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.Yanxia:
+                    return new List<string> {Weather.Showers,Weather.Rain,Weather.Fog,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.AzimSteppe:
+                    return new List<string> {Weather.Gales,Weather.Wind,Weather.Rain,Weather.Fog,Weather.Clouds,Weather.FairSkies,Weather.ClearSkies};
+                case Zones.EurekaAnemos:
+                    return new List<string> {Weather.FairSkies, Weather.Gales, Weather.Showers, Weather.Snow};
+                case Zones.EurekaPagos:
+                    return new List<string> { Weather.ClearSkies, Weather.Fog, Weather.HeatWaves, Weather.Snow, Weather.Thunder, Weather.Blizzards };
+                case Zones.EurekaPyros:
+                    return new List<string> { Weather.FairSkies, Weather.HeatWaves, Weather.Thunder, Weather.Blizzards, Weather.UmbralWind, Weather.Snow };
+                case Zones.EurekaHydatos:
+                    return new List<string> { Weather.FairSkies, Weather.Showers, Weather.Gloom, Weather.Thunderstorms, Weather.Snow };
+                case Zones.Crystarium:
+                    return new List<string> { Weather.ClearSkies, Weather.FairSkies, Weather.Clouds, Weather.Fog, Weather.Rain, Weather.Thunderstorms };
+                case Zones.Eulmore:
+                    return new List<string> { Weather.Gales, Weather.Rain, Weather.Fog, Weather.Clouds, Weather.FairSkies, Weather.ClearSkies };
+                case Zones.Lakeland:
+                    return new List<string> { Weather.ClearSkies, Weather.FairSkies, Weather.Clouds, Weather.Fog, Weather.Rain, Weather.Thunderstorms };
+                case Zones.Kholusia:
+                    return new List<string> { Weather.Gales, Weather.Rain, Weather.Fog, Weather.Clouds, Weather.FairSkies, Weather.ClearSkies };
+                case Zones.AmhAraeng:
+                    return new List<string> { Weather.FairSkies, Weather.Clouds, Weather.DustStorms, Weather.HeatWaves, Weather.ClearSkies };
+                case Zones.IlMheg:
+                    return new List<string> { Weather.Rain, Weather.Fog, Weather.Clouds, Weather.Thunderstorms, Weather.ClearSkies, Weather.FairSkies };
+                case Zones.RaktikaGreatwood:
+                    return new List<string> { Weather.Fog, Weather.Rain, Weather.UmbralWind, Weather.ClearSkies, Weather.FairSkies, Weather.Clouds };
                 default:
                     throw new InvalidOperationException($"Zone {zone} is not yet implemented.");
             }
@@ -654,49 +734,56 @@ namespace WeatherApp.Domain.Services
         {
             return new List<string>
             {
-                "Limsa Lominsa",
-                "Middle La Noscea",
-                "Lower La Noscea",
-                "Eastern La Noscea",
-                "Western La Noscea",
-                "Upper La Noscea",
-                "Outer La Noscea",
-                "Mist",
-                "Gridania",
-                "Central Shroud",
-                "East Shroud",
-                "South Shroud",
-                "North Shroud",
-                "The Lavender Beds",
-                "Ul'dah",
-                "Western Thanalan",
-                "Central Thanalan",
-                "Eastern Thanalan",
-                "Southern Thanalan",
-                "Northern Thanalan",
-                "The Goblet",
-                "Mor Dhona",
-                "Ishgard",
-                "Coerthas Central Highlands",
-                "Coerthas Western Highlands",
-                "The Sea of Clouds",
-                "Azys Lla",
-                "The Dravanian Forelands",
-                "The Dravanian Hinterlands",
-                "The Churning Mists",
-                "Idyllshire",
-                "Rhalgr's Reach",
-                "The Fringes",
-                "The Peaks",
-                "The Lochs",
-                "The Ruby Sea",
-                "Yanxia",
-                "The Azim Steppe",
-                "Kugane",
-                "Eureka Anemos",
-                "Eureka Pagos",
-                "Eureka Pyros",
-                "Eureka Hydatos"
+                Zones.LimsaLominsa,
+                Zones.MiddleLaNoscea,
+                Zones.LowerLaNoscea,
+                Zones.EasternLaNoscea,
+                Zones.WesternLaNoscea,
+                Zones.UpperLaNoscea,
+                Zones.OuterLaNoscea,
+                Zones.Mist,
+                Zones.Gridania,
+                Zones.CentralShroud,
+                Zones.EastShroud,
+                Zones.SouthShroud,
+                Zones.NorthShroud,
+                Zones.LavenderBeds,
+                Zones.Uldah,
+                Zones.WesternThanalan,
+                Zones.CentralThanalan,
+                Zones.EasternThanalan,
+                Zones.SouthernThanalan,
+                Zones.NorthernThanalan,
+                Zones.Goblet,
+                Zones.MorDhona,
+                Zones.Ishgard,
+                Zones.CoerthasCentralHighlands,
+                Zones.CoerthasWesternHighlands,
+                Zones.SeaOfClouds,
+                Zones.AzysLla,
+                Zones.DravanianForelands,
+                Zones.DravanianHinterlands,
+                Zones.ChurningMists,
+                Zones.Idyllshire,
+                Zones.RhalgrsReach,
+                Zones.Fringes,
+                Zones.Peaks,
+                Zones.Lochs,
+                Zones.RubySea,
+                Zones.Yanxia,
+                Zones.AzimSteppe,
+                Zones.Kugane,
+                Zones.EurekaAnemos,
+                Zones.EurekaPagos,
+                Zones.EurekaPyros,
+                Zones.EurekaHydatos,
+                Zones.Crystarium,
+                Zones.Eulmore,
+                Zones.Lakeland,
+                Zones.Kholusia,
+                Zones.AmhAraeng,
+                Zones.IlMheg,
+                Zones.RaktikaGreatwood
             };
         }
 
@@ -707,13 +794,14 @@ namespace WeatherApp.Domain.Services
         {
             return new List<string>
             {
-                "Black Shroud",
-                "La Noscea",
-                "Thanalan",
-                "Ishgard/Surrounding",
-                "Gyr Abania",
-                "Far East",
-                "Others"
+                Regions.BlackShroud,
+                Regions.LaNoscea,
+                Regions.Thanalan,
+                Regions.Ishgard,
+                Regions.GyrAbania,
+                Regions.FarEast,
+                Regions.Norvrandt,
+                Regions.Others
             };
         }
 
@@ -723,28 +811,31 @@ namespace WeatherApp.Domain.Services
         private static List<string> GetZonesForRegion(string region)
         {
             var l = new List<string>();
-            switch (region.ToLower())
+            switch (region)
             {
-                case "black shroud":
-                    l.AddRange(new [] { "Gridania", "Central Shroud", "East Shroud", "South Shroud", "North Shroud", "The Lavender Beds" });
+                case Regions.BlackShroud:
+                    l.AddRange(new[] { Zones.Gridania, Zones.CentralShroud, Zones.EastShroud, Zones.SouthShroud, Zones.NorthShroud, Zones.LavenderBeds });
                     break;
-                case "la noscea":
-                    l.AddRange(new [] { "Limsa Lominsa", "Middle La Noscea", "Lower La Noscea", "Eastern La Noscea", "Western La Noscea", "Upper La Noscea", "Outer La Noscea", "Mist" });
+                case Regions.LaNoscea:
+                    l.AddRange(new[] { Zones.LimsaLominsa, Zones.MiddleLaNoscea, Zones.LowerLaNoscea, Zones.EasternLaNoscea, Zones.WesternThanalan, Zones.UpperLaNoscea, Zones.OuterLaNoscea, Zones.Mist });
                     break;
-                case "thanalan":
-                    l.AddRange(new [] { "Ul'dah", "Western Thanalan", "Central Thanalan", "Eastern Thanalan", "Southern Thanalan", "Northern Thanalan", "The Goblet" });
+                case Regions.Thanalan:
+                    l.AddRange(new[] { Zones.Uldah, Zones.WesternThanalan, Zones.CentralThanalan, Zones.EasternThanalan, Zones.SouthernThanalan, Zones.NorthernThanalan, Zones.Goblet });
                     break;
-                case "ishgard/surrounding":
-                    l.AddRange(new [] { "Ishgard", "Coerthas Central Highlands", "Coerthas Western Highlands", "The Sea of Clouds", "Azys Lla", "The Dravanian Forelands", "The Dravanian Hinterlands", "The Churning Mists", "Idyllshire" });
+                case Regions.Ishgard:
+                    l.AddRange(new[] { Zones.Ishgard, Zones.CoerthasCentralHighlands, Zones.CoerthasWesternHighlands, Zones.SeaOfClouds, Zones.AzysLla, Zones.DravanianForelands, Zones.DravanianHinterlands, Zones.ChurningMists, Zones.Idyllshire });
                     break;
-                case "gyr abania":
-                    l.AddRange(new [] { "Rhalgr's Reach", "The Fringes", "The Peaks", "The Lochs" });
+                case Regions.GyrAbania:
+                    l.AddRange(new[] { Zones.RhalgrsReach, Zones.Fringes, Zones.Peaks, Zones.Lochs });
                     break;
-                case "far east":
-                    l.AddRange(new [] { "The Ruby Sea", "Yanxia", "The Azim Steppe", "Kugane" });
+                case Regions.FarEast:
+                    l.AddRange(new[] { Zones.RubySea, Zones.Yanxia, Zones.AzimSteppe, Zones.Kugane });
                     break;
-                case "others":
-                    l.AddRange(new [] { "Mor Dhona", "Eureka Anemos", "Eureka Pagos", "Eureka Pyros", "Eureka Hydatos" });
+                case Regions.Norvrandt:
+                    l.AddRange(new[] { Zones.Crystarium, Zones.Eulmore, Zones.Lakeland, Zones.Kholusia, Zones.AmhAraeng, Zones.IlMheg, Zones.RaktikaGreatwood });
+                    break;
+                case Regions.Others:
+                    l.AddRange(new[] { Zones.MorDhona, Zones.EurekaAnemos, Zones.EurekaPagos, Zones.EurekaPyros, Zones.EurekaHydatos });
                     break;
             }
 
@@ -760,92 +851,106 @@ namespace WeatherApp.Domain.Services
         {
             switch (zone)
             {
-                    case "Limsa Lominsa":
+                    case Zones.LimsaLominsa:
                         return 1;
-                    case "Middle La Noscea":
+                    case Zones.MiddleLaNoscea:
                         return 2;
-                    case "Lower La Noscea":
+                    case Zones.LowerLaNoscea:
                         return 3;
-                    case "Eastern La Noscea":
+                    case Zones.EasternLaNoscea:
                         return 4;
-                    case "Western La Noscea":
+                    case Zones.WesternLaNoscea:
                         return 5;
-                    case "Upper La Noscea":
+                    case Zones.UpperLaNoscea:
                         return 6;
-                    case "Outer La Noscea":
+                    case Zones.OuterLaNoscea:
                         return 7;
-                    case "Mist":
+                    case Zones.Mist:
                         return 8;
-                    case "Gridania":
+                    case Zones.Gridania:
                         return 9;
-                    case "Central Shroud":
+                    case Zones.CentralShroud:
                         return 10;
-                    case "East Shroud":
+                    case Zones.EastShroud:
                         return 11;
-                    case "South Shroud":
+                    case Zones.SouthShroud:
                         return 12;
-                    case "North Shroud":
+                    case Zones.NorthShroud:
                         return 13;
-                    case "The Lavender Beds":
+                    case Zones.LavenderBeds:
                         return 14;
-                    case "Ul'dah":
+                    case Zones.Uldah:
                         return 15;
-                    case "Western Thanalan":
+                    case Zones.WesternThanalan:
                         return 16;
-                    case "Central Thanalan":
+                    case Zones.CentralThanalan:
                         return 17;
-                    case "Eastern Thanalan":
+                    case Zones.EasternThanalan:
                         return 18;
-                    case "Southern Thanalan":
+                    case Zones.SouthernThanalan:
                         return 19;
-                    case "Northern Thanalan":
+                    case Zones.NorthernThanalan:
                         return 20;
-                    case "The Goblet":
+                    case Zones.Goblet:
                         return 21;
-                    case "Mor Dhona":
+                    case Zones.MorDhona:
                         return 22;
-                    case "Ishgard":
+                    case Zones.Ishgard:
                         return 23;
-                    case "Coerthas Central Highlands":
+                    case Zones.CoerthasCentralHighlands:
                         return 24;
-                    case "Coerthas Western Highlands":
+                    case Zones.CoerthasWesternHighlands:
                         return 25;
-                    case "The Sea of Clouds":
+                    case Zones.SeaOfClouds:
                         return 26;
-                    case "Azys Lla":
+                    case Zones.AzysLla:
                         return 27;
-                    case "Idyllshire":
+                    case Zones.Idyllshire:
                         return 28;
-                    case "The Dravanian Forelands":
+                    case Zones.DravanianForelands:
                         return 29;
-                    case "The Dravanian Hinterlands":
+                    case Zones.DravanianHinterlands:
                         return 30;
-                    case "The Churning Mists":
+                    case Zones.ChurningMists:
                         return 31;
-                    case "Rhalgr's Reach":
+                    case Zones.RhalgrsReach:
                         return 32;
-                    case "The Fringes":
+                    case Zones.Fringes:
                         return 33;
-                    case "The Peaks":
+                    case Zones.Peaks:
                         return 34;
-                    case "The Lochs":
+                    case Zones.Lochs:
                         return 35;
-                    case "The Ruby Sea":
+                    case Zones.RubySea:
                         return 36;
-                    case "Yanxia":
+                    case Zones.Yanxia:
                         return 37;
-                    case "The Azim Steppe":
+                    case Zones.AzimSteppe:
                         return 38;
-                    case "Kugane":
+                    case Zones.Kugane:
                         return 39;
-                    case "Eureka Anemos":
+                    case Zones.EurekaAnemos:
                         return 40;
-                    case "Eureka Pagos":
+                    case Zones.EurekaPagos:
                         return 41;
-                    case "Eureka Pyros":
+                    case Zones.EurekaPyros:
                         return 42;
-                    case "Eureka Hydatos":
+                    case Zones.EurekaHydatos:
                         return 43;
+                    case Zones.Crystarium:
+                        return 44;
+                    case Zones.Eulmore:
+                        return 45;
+                    case Zones.Lakeland:
+                        return 46;
+                    case Zones.Kholusia:
+                        return 47;
+                    case Zones.AmhAraeng:
+                        return 48;
+                    case Zones.IlMheg:
+                        return 49;
+                    case Zones.RaktikaGreatwood:
+                        return 50;
                     default:
                         return default;
             }
