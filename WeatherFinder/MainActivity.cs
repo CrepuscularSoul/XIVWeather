@@ -18,7 +18,7 @@ namespace WeatherFinder
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.drawer_layout);
             ConfigureNavigation();
-            
+
             if (FragmentManager.FindFragmentById(Resource.Id.fragment_view) == null)
                 InitializeView();
         }
@@ -29,10 +29,10 @@ namespace WeatherFinder
         private void ConfigureNavigation()
         {
             _drawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
-            
+
             var nv = FindViewById<NavigationView>(Resource.Id.nav_view);
             nv.SetNavigationItemSelectedListener(this);
-            
+
             var tb = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
             //inflates the menu. Using this instead of overriding OnCreateOptionsMenu() to avoid the overflow menu
             tb.InflateMenu(Resource.Menu.main_menu);
@@ -68,11 +68,11 @@ namespace WeatherFinder
                     f = new WeatherForecastFragment();
                 else
                     f = new WeatherFinderFragment();
-                
+
                 tran.Replace(Resource.Id.fragment_view, f, string.Empty);
                 tran.Commit();
             }
-            
+
             _drawerLayout.CloseDrawers();
             return true;
         }

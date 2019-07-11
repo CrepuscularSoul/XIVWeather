@@ -48,7 +48,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Constants.cs" />
+    <Compile Include="Models\Enums.cs" />
+    <Compile Include="Models\Gathering\Collectible.cs" />
+    <Compile Include="Models\Locations\Region.cs" />
+    <Compile Include="Models\Locations\WeatherBreakpoint.cs" />
+    <Compile Include="Models\Locations\Zone.cs" />
     <Compile Include="Models\RegionForecasts.cs" />
+    <Compile Include="Repository\RegionRepository.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\WeatherChance.cs" />

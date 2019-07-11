@@ -65,7 +65,7 @@ namespace WeatherFinder
             var desiredElement = _view.FindViewById<MultiSelectionSpinner>(Resource.Id.DesiredSpinner);
             var previousElement = _view.FindViewById<MultiSelectionSpinner>(Resource.Id.PreviousSpinner);
             var weatherTable = _view.FindViewById<TableLayout>(Resource.Id.resultsTable);
-            
+
             desiredElement.Items = weatherOptions;
             previousElement.Items = weatherOptions;
             weatherTable.RemoveAllViews();
@@ -85,7 +85,7 @@ namespace WeatherFinder
             var previousWeather = GetSelectedWeather(_view.FindViewById<MultiSelectionSpinner>(Resource.Id.PreviousSpinner));
             var desiredMatches = (int) _view.FindViewById<Spinner>(Resource.Id.MaximumMatches).SelectedItem;
             var desiredWindows = (int) _view.FindViewById<Spinner>(Resource.Id.MaximumWindows).SelectedItem;
-            
+
             var times = new List<string>();
             if (_view.FindViewById<CheckBox>(Resource.Id.chkZeroToEight).Checked)
                 times.Add("0");
@@ -110,7 +110,7 @@ namespace WeatherFinder
 
             var headerRow = BuildRow("Previous\t", "Current\t", "Eorzea\t", "Local\t");
             weatherTable.AddView(headerRow);
-            
+
             foreach (var result in results)
             {
                 var row = BuildWeatherRow(
