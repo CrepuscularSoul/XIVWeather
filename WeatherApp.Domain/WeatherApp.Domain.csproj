@@ -49,7 +49,6 @@
   <ItemGroup>
     <Compile Include="Models\Constants.cs" />
     <Compile Include="Models\Enums.cs" />
-    <Compile Include="Models\Gathering\Collectible.cs" />
     <Compile Include="Models\Locations\Region.cs" />
     <Compile Include="Models\Locations\WeatherBreakpoint.cs" />
     <Compile Include="Models\Locations\Zone.cs" />

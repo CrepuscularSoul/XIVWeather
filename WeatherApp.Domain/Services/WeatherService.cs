@@ -10,7 +10,7 @@ namespace WeatherApp.Domain.Services
 {
     public class WeatherService
     {
-        public static List<Models.Locations.Region> RegionsOfTheWorld { get; private set; }
+        public static List<Models.Locations.Region> Regions { get; private set; }
 
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1);
         private const int SecondsPerEorzeaHour = 175,
@@ -20,7 +20,7 @@ namespace WeatherApp.Domain.Services
 
         static WeatherService()
         {
-            RegionsOfTheWorld = RegionRepository.GetRegions();
+            Regions = RegionRepository.GetRegions();
         }
 
         /// <summary>
@@ -56,9 +56,9 @@ namespace WeatherApp.Domain.Services
             {
                 var weatherMatch = !parameters.DesiredWeather.Any()
                                    || parameters.DesiredWeather.Any(x => x == weather);
-                var previousWeatherMatch = !parameters.DesiredPreviousWeather.Any() 
+                var previousWeatherMatch = !parameters.DesiredPreviousWeather.Any()
                                            || parameters.DesiredPreviousWeather.Any(x => x == previousWeather);
-                var timeMatch = !parameters.DesiredTimes.Any() 
+                var timeMatch = !parameters.DesiredTimes.Any()
                                 || parameters.DesiredTimes.Any(x => weatherStartHour.ToString() == x);
 
                 if (weatherMatch && previousWeatherMatch && timeMatch)
@@ -101,7 +101,7 @@ namespace WeatherApp.Domain.Services
         /// </summary>
         public static string GetWeatherNameForTime(DateTime date, string zone)
         {
-            var thing = RegionsOfTheWorld.GetZone(zone).GetWeatherForCalculatedChance(CalculateForecastTarget(date));
+            var thing = Regions.GetZone(zone).GetWeatherForCalculatedChance(CalculateForecastTarget(date));
             return Enums.WeatherMapping[thing];
         }
 
@@ -172,7 +172,7 @@ namespace WeatherApp.Domain.Services
         /// Get the available weather types for the specified zone
         /// </summary>
         public static List<string> GetWeatherOptionsForZone(string zone) =>
-            RegionsOfTheWorld
+            Regions
                 .FirstOrDefault(x => x.Zones.Any(y => y.Name == zone))
                 ?.Zones
                 .First(x => x.Name == zone)
@@ -185,19 +185,19 @@ namespace WeatherApp.Domain.Services
         /// Get the list of available zones
         /// </summary>
         public static List<string> GetZones() =>
-            RegionsOfTheWorld.SelectMany(x => x.Zones.Select(y => y.Name)).ToList();
+            Regions.SelectMany(x => x.Zones.Select(y => y.Name)).ToList();
 
         /// <summary>
         /// Returns a list of available regions
         /// </summary>
         public static List<string> GetRegions() =>
-            RegionsOfTheWorld.Select(x => x.Name).ToList();
+            Regions.Select(x => x.Name).ToList();
 
         /// <summary>
         /// Get the list of zones that belong to the specified region
         /// </summary>
         private static List<string> GetZonesForRegion(string region) =>
-            RegionsOfTheWorld
+            Regions
                 .FirstOrDefault(x => x.Name == region)?
                 .Zones
                 .Select(x => x.Name)
