@@ -1,21 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
+﻿using System.Collections.Generic;
 using WeatherApp.Domain.Models;
 using WeatherApp.Domain.Models.Locations;
 
 namespace WeatherApp.Domain.Repository
 {
+    /// <summary>
+    /// Repository for retrieving Region information.
+    /// </summary>
+    /// <remarks>
+    /// Currently just uses in memory collections.
+    /// </remarks>
     public class RegionRepository
     {
+        /// <summary>
+        /// Gets all regions and associated zone and weather information.
+        /// </summary>
         public static List<Region> GetRegions()
         {
             return new List<Region>
@@ -31,6 +30,9 @@ namespace WeatherApp.Domain.Repository
             };
         }
 
+        /// <summary>
+        /// Gets the details for La Noscea
+        /// </summary>
         private static Region LaNoscea =>
             new Region
             {
@@ -141,6 +143,9 @@ namespace WeatherApp.Domain.Repository
                 }
             };
 
+        /// <summary>
+        /// Gets the details for The Black Shroud
+        /// </summary>
         private static Region BlackShroud
             => new Region
             {
@@ -233,6 +238,9 @@ namespace WeatherApp.Domain.Repository
                 }
             };
 
+        /// <summary>
+        /// Gets the details for Thanalan
+        /// </summary>
         private static Region Thanalan
             => new Region
             {
@@ -327,6 +335,9 @@ namespace WeatherApp.Domain.Repository
                 }
             };
 
+        /// <summary>
+        /// Gets the details for Ishgard and its surrounding areas.
+        /// </summary>
         private static Region IshgardAndSurrounding
             => new Region
             {
@@ -448,6 +459,9 @@ namespace WeatherApp.Domain.Repository
                 }
             };
 
+        /// <summary>
+        /// Gets the details for miscellaneous areas such as Eureka or Mor Dhona.
+        /// </summary>
         private static Region Others
             => new Region
             {
@@ -518,6 +532,9 @@ namespace WeatherApp.Domain.Repository
                 }
             };
 
+        /// <summary>
+        /// Gets the details for the far east zones.
+        /// </summary>
         private static Region FarEast
             => new Region
             {
@@ -577,6 +594,10 @@ namespace WeatherApp.Domain.Repository
                     },
                 }
             };
+
+        /// <summary>
+        /// Gets the details for Gyr Abania
+        /// </summary>
         private static Region GyrAbania
             => new Region
             {
@@ -635,6 +656,9 @@ namespace WeatherApp.Domain.Repository
                 }
             };
 
+        /// <summary>
+        /// Gets the details for Norvrandt.
+        /// </summary>
         private static Region Norvrandt
             => new Region
             {

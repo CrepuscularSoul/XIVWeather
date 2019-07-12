@@ -7,8 +7,16 @@ using System.Reflection;
 
 namespace WeatherApp.Domain.Models
 {
+    /// <summary>
+    /// Class containing enums used throughout the application
+    /// </summary>
     public static class Enums
     {
+        /// <summary>
+        /// Initializes the WeatherMapping dictionary via reflection. This is primarily
+        /// so objects can work with the weather enum, but easily translate that to something
+        /// useful for displaying in the app by pulling them from the constants class.
+        /// </summary>
         static Enums()
         {
             WeatherMapping = new Dictionary<Weather, string>();
@@ -23,6 +31,9 @@ namespace WeatherApp.Domain.Models
             }
         }
 
+        /// <summary>
+        /// Weather conditions available in the game.
+        /// </summary>
         public enum Weather
         {
             Blizzards,
@@ -44,6 +55,9 @@ namespace WeatherApp.Domain.Models
             Wind,
         }
 
+        /// <summary>
+        /// Maps an enum value to a display friendly string.
+        /// </summary>
         public static Dictionary<Weather, string> WeatherMapping { get; }
     }
 }

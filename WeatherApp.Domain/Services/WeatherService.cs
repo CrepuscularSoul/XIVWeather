@@ -54,14 +54,7 @@ namespace WeatherApp.Domain.Services
 
             while (tries < parameters.MaxTries && matches < parameters.MaxMatches)
             {
-                var weatherMatch = !parameters.DesiredWeather.Any()
-                                   || parameters.DesiredWeather.Any(x => x == weather);
-                var previousWeatherMatch = !parameters.DesiredPreviousWeather.Any()
-                                           || parameters.DesiredPreviousWeather.Any(x => x == previousWeather);
-                var timeMatch = !parameters.DesiredTimes.Any()
-                                || parameters.DesiredTimes.Any(x => weatherStartHour.ToString() == x);
-
-                if (weatherMatch && previousWeatherMatch && timeMatch)
+                if (ParametersMatchWindow(parameters, weather, previousWeather, weatherStartHour))
                 {
                     results.Add(new WeatherResult
                     {
@@ -82,6 +75,23 @@ namespace WeatherApp.Domain.Services
             }
 
             return results;
+        }
+
+        /// <summary>
+        /// Checks whether the desired conditions in parameters match the window being tested.
+        /// </summary>
+        private static bool ParametersMatchWindow(
+            WeatherParameters parameters, string weather, 
+            string previousWeather, int weatherStartHour)
+        {
+            var weatherMatch = !parameters.DesiredWeather.Any()
+                               || parameters.DesiredWeather.Any(x => x == weather);
+            var previousWeatherMatch = !parameters.DesiredPreviousWeather.Any()
+                                       || parameters.DesiredPreviousWeather.Any(x => x == previousWeather);
+            var timeMatch = !parameters.DesiredTimes.Any()
+                            || parameters.DesiredTimes.Any(x => weatherStartHour.ToString() == x);
+
+            return weatherMatch && previousWeatherMatch && timeMatch;
         }
 
         /// <summary>
