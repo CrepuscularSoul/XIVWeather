@@ -111,8 +111,8 @@ namespace WeatherApp.Domain.Services
         /// </summary>
         public static string GetWeatherNameForTime(DateTime date, string zone)
         {
-            var thing = Regions.GetZone(zone).GetWeatherForCalculatedChance(CalculateForecastTarget(date));
-            return Enums.WeatherMapping[thing];
+            var weatherEnum = Regions.GetZone(zone).GetWeatherForCalculatedChance(CalculateForecastTarget(date));
+            return Enums.WeatherMapping[weatherEnum];
         }
 
         /// <summary>
