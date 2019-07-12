@@ -34,6 +34,26 @@ namespace WeatherApp.Domain.Tests
             results.Count.Should().Be(5);
         }
 
+        [Test]
+        public void RegionWeatherContainsNoDuplicates()
+        {
+            var result = WeatherService.Regions.Any(
+                x => x.Zones.Any(
+                    y => y.WeatherConditions.Distinct().Count() != y.WeatherConditions.Count));
+
+            result.Should().BeFalse();
+        }
+
+        [Test]
+        public void RegionWeatherBreakpointsContainOneBreakpointForOneHundred()
+        {
+            var result = WeatherService.Regions.All(
+                x => x.Zones.All(
+                    y => y.WeatherBreakpoints.Count(z => z.Value == 100) == 1));
+
+            result.Should().BeTrue();
+        }
+
         #region Get Eorzea Time Works
 
         [TestCase(2018, 12, 28, 13, 43, 19, "07:59")]
@@ -222,7 +242,7 @@ namespace WeatherApp.Domain.Tests
         #endregion
 
         #region Get Weather Name For Time Returns Correct Result For Zone
-        
+
         [TestCase(2018, 12, 13, 14, 23, 20, "Eureka Pyros", "Fair Skies")]
         [TestCase(2018, 12, 13, 14, 46, 40, "Eureka Pyros", "Heat Waves")]
         [TestCase(2018, 12, 13, 15, 10, 0, "Eureka Pyros", "Heat Waves")]

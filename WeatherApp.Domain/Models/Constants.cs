@@ -4,6 +4,8 @@
     {
         public static class Weather
         {
+            // These get used with reflection
+            // ReSharper disable UnusedMember.Global
             public const string
                 Blizzards = "Blizzards",
                 ClearSkies = "Clear Skies",
@@ -22,6 +24,7 @@
                 UmbralStatic = "Umbral Static",
                 UmbralWind = "Umbral Wind",
                 Wind = "Wind";
+            // ReSharper restore UnusedMember.Global
         }
 
         public static class Zones
