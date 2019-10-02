@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WeatherApp.Domain.Models
+namespace WeatherApp.Domain.Models.Weather
 {
     public class RegionForecast
     {

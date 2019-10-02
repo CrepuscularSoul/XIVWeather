@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using WeatherApp.Domain.Models;
+using WeatherApp.Domain.Models.Weather;
 using WeatherApp.Domain.Services;
 
 namespace WeatherApp.Domain.Tests
@@ -235,7 +236,7 @@ namespace WeatherApp.Domain.Tests
         [TestCase(2018, 12, 28, 13, 46, 15, "09:00")]
         public void GetEorzeaTimeWorks(int year, int month, int day, int hour, int minute, int second, string expected)
         {
-            var result = WeatherService.GetEorzeaTime(new DateTime(year, month, day, hour, minute, second));
+            var result = WeatherService.GetEorzeaTimeOfDay(new DateTime(year, month, day, hour, minute, second));
             result.Should().Be(expected);
         }
 

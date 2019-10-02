@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Android.App;
 using Android.Content;
@@ -70,26 +71,11 @@ namespace WeatherFinder
         /// </summary>
         public override bool PerformClick()
         {
-            var builder = new AlertDialog.Builder(Context);
-            builder.SetMultiChoiceItems(Items.ToArray(), _selection, this);
-            builder.SetPositiveButton("Ok", (sender, args) => { });
-            builder.Show();
+            using var _ = new AlertDialog.Builder(Context)
+                .SetMultiChoiceItems(Items.ToArray(), _selection, this)
+                .SetPositiveButton("Ok", (sender, args) => { })
+                .Show();
             return true;
-        }
-
-        /// <summary>
-        /// Set the selected items
-        /// </summary>
-        /// <param name="index"></param>
-        public override void SetSelection(int index)
-        {
-            for (var i = 0; i < _selection.Length; i++)
-                _selection[i] = false;
-            if (index >= 0 && index < _selection.Length)
-                _selection[index] = true;
-            
-            _simpleAdapter.Clear();
-            _simpleAdapter.Add(BuildSelectedItemString());
         }
 
         /// <summary>
@@ -107,7 +93,7 @@ namespace WeatherFinder
         public List<int> GetSelectedIndicies()
         {
             var selection = new List<int>();
-            for (var i = 0; i < Items.Count; ++i)
+            for (var i = 0; i < Items.Count; i++)
             {
                 if (_selection[i])
                     selection.Add(i);
@@ -121,24 +107,10 @@ namespace WeatherFinder
         /// <returns></returns>
         private string BuildSelectedItemString()
         {
-            var sb = new StringBuilder("\t");
             if (!_selection.Any(x => x))
-            {
-                sb.Append("Select...");
-                return sb.ToString();
-            }
+                return "\tSelect...";
 
-            var foundOne = false;
-            for (var i = 0; i < _items.Count; ++i)
-            {
-                if (!_selection[i])
-                    continue;
-                if (foundOne)
-                    sb.Append(", ");
-                foundOne = true;
-                sb.Append(Items[i]);
-            }
-            return sb.ToString();
+            return "\t" + string.Join(", ", GetSelectedStrings());
         }
     }
 }

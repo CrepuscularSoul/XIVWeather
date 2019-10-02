@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WeatherApp.Domain.Models
+namespace WeatherApp.Domain.Models.Weather
 {
     /// <summary>
     /// Class containing details about an upcoming weather window
