@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WeatherApp.Domain.Models
+namespace WeatherApp.Domain.Models.Weather
 {
     /// <summary>
     /// Class to contain the parameters needed to search for weather conditions

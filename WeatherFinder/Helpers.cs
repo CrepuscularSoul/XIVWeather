@@ -1,4 +1,8 @@
-﻿namespace WeatherFinder
+﻿using Android.Content;
+using Android.Views;
+using Android.Widget;
+
+namespace WeatherFinder
 {
     public static class Helpers
     {
@@ -56,6 +60,39 @@
             if (hour.Length == 1)
                 hour = "0" + hour;
             return $"{hour}:00";
+        }
+
+        public static TextView BuildTextView(
+            string text, Context viewContext,
+            GravityFlags gravity = GravityFlags.Top | GravityFlags.Start,
+            int? minHeight = null, int? minWidth = null,
+            (int left, int top, int right, int bottom) pad = default)
+        {
+            var tv = new TextView(viewContext) { Text = text, Gravity = gravity};
+            if (minHeight != null)
+                tv.SetMinHeight(minHeight.Value);
+            if (minWidth != null)
+                tv.SetMinWidth(minWidth.Value);
+            tv.SetPadding(pad.left, pad.top, pad.right, pad.bottom);
+
+            return tv;
+        }
+
+        public static ImageView BuildImageView(
+            string resourceName, Context viewContext, string toolTip,
+            int? minHeight = null, int? minWidth = null,
+            (int left, int top, int right, int bottom) pad = default)
+        {
+            var iv = new ImageView(viewContext);
+            iv.SetImageResource(GetWeatherIconIdFromName(resourceName));
+            iv.TooltipText = toolTip;
+            if (minHeight != null)
+                iv.SetMinimumHeight(minHeight.Value);
+            if (minWidth != null)
+                iv.SetMinimumWidth(minWidth.Value);
+            iv.SetPadding(pad.left, pad.top, pad.right, pad.bottom);
+
+            return iv;
         }
     }
 }

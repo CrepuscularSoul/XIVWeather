@@ -4,7 +4,7 @@ using Android.Graphics;
 using Android.OS;
 using Android.Views;
 using Android.Widget;
-using WeatherApp.Domain.Models;
+using WeatherApp.Domain.Models.Weather;
 using WeatherApp.Domain.Services;
 
 namespace WeatherFinder
@@ -37,8 +37,8 @@ namespace WeatherFinder
 
             var dimensions = new BitmapFactory.Options() { InJustDecodeBounds = true };
             BitmapFactory.DecodeResource(_view.Resources, Resource.Drawable.Blizzards, dimensions);
-            _imageHeight = (int) (dimensions.OutHeight * ((decimal)dimensions.InTargetDensity / (decimal) dimensions.InDensity));
-            _imageWidth = (int) (dimensions.OutWidth * ((decimal) dimensions.InTargetDensity / (decimal) dimensions.InDensity));
+            _imageHeight = (int) (dimensions.OutHeight * ((decimal)dimensions.InTargetDensity / dimensions.InDensity));
+            _imageWidth = (int) (dimensions.OutWidth * ((decimal) dimensions.InTargetDensity / dimensions.InDensity));
 
         }
 
@@ -91,13 +91,12 @@ namespace WeatherFinder
             spacer.SetMinHeight(_imageHeight);
             layout.AddView(spacer);
 
-            foreach (var label in forecast.ZoneForecasts.OrderBy(x => x.ZoneOrder).Select(x => x.Zone))
-            {
-                var tv = new TextView(_view.Context) {Text = label, Gravity = GravityFlags.Center};
-                tv.SetMinHeight(_imageHeight);
-                layout.AddView(tv);
-            }
-
+            forecast.ZoneForecasts
+                .OrderBy(x => x.ZoneOrder)
+                .Select(x => Helpers.BuildTextView(x.Zone, _view.Context, GravityFlags.Center, _imageHeight, _imageWidth))
+                .ToList()
+                .ForEach(x => layout.AddView(x));
+            
             return layout;
         }
 
@@ -107,40 +106,56 @@ namespace WeatherFinder
         private HorizontalScrollView BuildForecastPanel(RegionForecast forecast)
         {
             var scrollView = new HorizontalScrollView(_view.Context);
-            var outerLinearLayout = new LinearLayout(_view.Context) { Orientation = Orientation.Vertical };
-
-            var first = forecast.ZoneForecasts.FirstOrDefault();
-            if (first == null)
+            if (forecast.ZoneForecasts.FirstOrDefault() == null)
                 return scrollView;
-
-            // Builds the Eorzea Hour header
-            var headerLayout = new LinearLayout(_view.Context) {Orientation = Orientation.Horizontal};
-            foreach (var item in first.WeatherResults.OrderBy(x => x.TimeOfWeather))
-            {
-                var tv = new TextView(_view.Context) { Text = item.StartTime, Gravity = GravityFlags.Center };
-                tv.SetMinHeight(_imageHeight);
-                tv.SetMinWidth(_imageWidth);
-                headerLayout.AddView(tv);
-            }
-            outerLinearLayout.AddView(headerLayout);
             
-            foreach (var zone in forecast.ZoneForecasts.OrderBy(x => x.ZoneOrder))
-            {
-                var linearLayout = new LinearLayout(_view.Context) { Orientation = Orientation.Horizontal };
-                foreach (var item in zone.WeatherResults.OrderBy(x => x.TimeOfWeather))
-                {
-                    var iv = new ImageView(_view.Context);
-                    iv.SetImageResource(Helpers.GetWeatherIconIdFromName(item.CurrentWeather));
-                    iv.TooltipText = $"{zone.Zone}\n{item.CurrentWeather} at {item.TimeOfWeather.ToLocalTime().ToShortTimeString()}";
-                    iv.SetMinimumWidth(_imageWidth);
-                    iv.SetMinimumHeight(_imageHeight);
-                    linearLayout.AddView(iv);
-                }
-                outerLinearLayout.AddView(linearLayout);
-            }
-
-            scrollView.AddView(outerLinearLayout);
+            var forecastLayout = new LinearLayout(_view.Context) { Orientation = Orientation.Vertical };
+            forecastLayout.AddView(BuildHeader(forecast));
+            forecast.ZoneForecasts
+                .OrderBy(x => x.ZoneOrder)
+                .Select(BuildSingleZoneForecast)
+                .ToList()
+                .ForEach(x => forecastLayout.AddView(x));
+            
+            scrollView.AddView(forecastLayout);
             return scrollView;
+        }
+
+        /// <summary>
+        /// Builds the header containing the Eorzea Hour each window starts.
+        /// </summary>
+        private LinearLayout BuildHeader(RegionForecast forecast)
+        {
+            var layout = new LinearLayout(_view.Context) { Orientation = Orientation.Horizontal};
+            forecast.ZoneForecasts.First().WeatherResults.OrderBy(x => x.TimeOfWeather)
+                .Select(x => Helpers.BuildTextView(x.StartTime, _view.Context, GravityFlags.Center, _imageHeight, _imageWidth))
+                .ToList()
+                .ForEach(x => layout.AddView(x));
+
+            return layout;
+        }
+
+        /// <summary>
+        /// Builds the forecast for a single zone.
+        /// </summary>
+        private LinearLayout BuildSingleZoneForecast(ZoneForecast zone)
+        {
+            var layout = new LinearLayout(_view.Context) { Orientation = Orientation.Horizontal};
+            zone.WeatherResults
+                .OrderBy(x => x.TimeOfWeather)
+                .Select(x => BuildImageView(x, zone.Zone))
+                .ToList()
+                .ForEach(x => layout.AddView(x));
+            return layout;
+        }
+
+        /// <summary>
+        /// Builds the image view for the weather window.
+        /// </summary>
+        private ImageView BuildImageView(WeatherResult result, string zone)
+        {
+            var tt = $"{zone}\n{result.CurrentWeather} at {result.TimeOfWeather.ToLocalTime().ToShortTimeString()}";
+            return Helpers.BuildImageView(result.CurrentWeather, _view.Context, tt, _imageHeight, _imageWidth);
         }
     }
 }

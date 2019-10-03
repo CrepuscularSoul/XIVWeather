@@ -48,12 +48,10 @@ namespace WeatherFinder
         /// </summary>
         private void InitializeView()
         {
-            using (var tran = FragmentManager.BeginTransaction())
-            {
-                var fragment = new WeatherFinderFragment();
-                tran.Add(Resource.Id.fragment_view, fragment, string.Empty);
-                tran.Commit();
-            }
+            using var tran = FragmentManager.BeginTransaction();
+            var fragment = new WeatherFinderFragment();
+            tran.Add(Resource.Id.fragment_view, fragment, string.Empty);
+            tran.Commit();
         }
 
         /// <summary>
@@ -61,17 +59,17 @@ namespace WeatherFinder
         /// </summary>
         public bool OnNavigationItemSelected(IMenuItem menuItem)
         {
-            using (var tran = FragmentManager.BeginTransaction())
-            {
-                Fragment f;
-                if (menuItem.ItemId == Resource.Id.forecast)
-                    f = new WeatherForecastFragment();
-                else
-                    f = new WeatherFinderFragment();
+            using var tran = FragmentManager.BeginTransaction();
 
-                tran.Replace(Resource.Id.fragment_view, f, string.Empty);
-                tran.Commit();
-            }
+            var f = menuItem.ItemId switch
+            {
+                Resource.Id.forecast => (Fragment) new WeatherForecastFragment(),
+                Resource.Id.find_weather => new WeatherFinderFragment(),
+                _ => null
+            };
+            
+            tran.Replace(Resource.Id.fragment_view, f, string.Empty);
+            tran.Commit();
 
             _drawerLayout.CloseDrawers();
             return true;
@@ -87,9 +85,9 @@ namespace WeatherFinder
                 case Android.Resource.Id.Home:
                     _drawerLayout.OpenDrawer(GravityCompat.Start);
                     return true;
+                default:
+                    return base.OnOptionsItemSelected(item);
             }
-
-            return base.OnOptionsItemSelected(item);
         }
     }
 }
