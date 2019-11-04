@@ -1,6 +1,8 @@
-﻿using Android.Content;
+﻿using System.Linq;
+using Android.Content;
 using Android.Views;
 using Android.Widget;
+using Android.Graphics;
 
 namespace WeatherFinder
 {
@@ -62,6 +64,9 @@ namespace WeatherFinder
             return $"{hour}:00";
         }
 
+        /// <summary>
+        /// Builds a <see cref="TextView"/> element to add to the UI.
+        /// </summary>
         public static TextView BuildTextView(
             string text, Context viewContext,
             GravityFlags gravity = GravityFlags.Top | GravityFlags.Start,
@@ -78,6 +83,9 @@ namespace WeatherFinder
             return tv;
         }
 
+        /// <summary>
+        /// Builds an image view element to add to the UI.
+        /// </summary>
         public static ImageView BuildImageView(
             string resourceName, Context viewContext, string toolTip,
             int? minHeight = null, int? minWidth = null,
@@ -93,6 +101,21 @@ namespace WeatherFinder
             iv.SetPadding(pad.left, pad.top, pad.right, pad.bottom);
 
             return iv;
+        }
+
+        /// <summary>
+        /// Builds a <see cref="TableRow"/> with the supplied values as <see cref="TextView"/> elements and
+        /// adds it to the <see cref="TableLayout"/>.
+        /// </summary>
+        public static void AddNewRow(this TableLayout layout, string[] values, Color? backgroundColor = null)
+        {
+            var row = new TableRow(layout.Context);
+            if (backgroundColor != null)
+                row.SetBackgroundColor(backgroundColor.Value);
+
+            var views = values.Select(x => Helpers.BuildTextView(x, layout.Context, pad: (10, 0, 10, 0)));
+            views.ToList().ForEach(row.AddView);
+            layout.AddView(row);
         }
     }
 }

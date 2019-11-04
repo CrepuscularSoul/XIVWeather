@@ -79,7 +79,8 @@
                 UpperLaNoscea = "Upper La Noscea",
                 WesternLaNoscea = "Western La Noscea",
                 WesternThanalan = "Western Thanalan",
-                Yanxia = "Yanxia";
+                Yanxia = "Yanxia",
+                Tempest = "The Tempest";
         }
 
         public class Regions

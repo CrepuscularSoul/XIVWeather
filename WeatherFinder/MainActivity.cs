@@ -65,6 +65,7 @@ namespace WeatherFinder
             {
                 Resource.Id.forecast => (Fragment) new WeatherForecastFragment(),
                 Resource.Id.find_weather => new WeatherFinderFragment(),
+                Resource.Id.gathering => new GatheringFragment(),
                 _ => null
             };
             
