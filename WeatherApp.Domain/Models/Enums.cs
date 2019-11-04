@@ -56,6 +56,63 @@ namespace WeatherApp.Domain.Models
         }
 
         /// <summary>
+        /// The types of shards, crystals, and clusters.
+        /// </summary>
+        public enum ClusterType
+        {
+            None,
+            Lightning,
+            Fire,
+            Ice,
+            Water,
+            Earth,
+            Wind
+        }
+
+        /// <summary>
+        /// The types of gatherers.
+        /// </summary>
+        public enum Gatherer
+        {
+            Botanist,
+            Miner,
+            Fisher
+        }
+
+        /// <summary>
+        /// The type of a gathering node.
+        /// </summary>
+        public enum NodeType
+        {
+            Standard,
+            Unspoiled,
+            Legendary,
+            Ephemeral
+        }
+
+        /// <summary>
+        /// The types of aethersand.
+        /// </summary>
+        public enum Aethersand
+        {
+            None,
+            Scuroglow,
+            Chiarglow,
+            Agedeep,
+            Agewood
+        }
+
+        /// <summary>
+        /// The types of scrips.
+        /// </summary>
+        public enum ScripType
+        {
+            None,
+            Yellow, 
+            White
+        }
+
+        /// <summary>
         /// Maps an enum value to a display friendly string.
         /// </summary>
         public static Dictionary<Weather, string> WeatherMapping { get; }
