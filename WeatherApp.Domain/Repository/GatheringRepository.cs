@@ -80,9 +80,9 @@ namespace WeatherApp.Domain.Repository
             {
                 Build("Shade Quartz", Constants.Zones.Kholusia, 22, 18, 16, 20, false, Enums.NodeType.Ephemeral, Enums.Aethersand.Agedeep, Enums.ClusterType.Fire, Enums.Gatherer.Miner, Enums.ScripType.None),
                 Build("Solarite", Constants.Zones.Lakeland, 29, 24, 8, 12, false, Enums.NodeType.Ephemeral, Enums.Aethersand.Scuroglow, Enums.ClusterType.Lightning, Enums.Gatherer.Miner, Enums.ScripType.None),
-                Build("Gale Rock", Constants.Zones.RaktikaGreatwood, 25, 28, 0, 4, false, Enums.NodeType.Ephemeral, Enums.Aethersand.Chiarglow, Enums.ClusterType.Water, Enums.Gatherer.Miner, Enums.ScripType.None),
+                Build("Gale Rock", Constants.Zones.RaktikaGreatwood, 25, 28, 0, 4, false, Enums.NodeType.Ephemeral, Enums.Aethersand.Chiaroglow, Enums.ClusterType.Water, Enums.Gatherer.Miner, Enums.ScripType.None),
                 Build("Bog Sage", Constants.Zones.Lakeland, 25, 29, 12, 16, false, Enums.NodeType.Ephemeral, Enums.Aethersand.Agewood, Enums.ClusterType.Ice, Enums.Gatherer.Botanist, Enums.ScripType.None),
-                Build("White Clay", Constants.Zones.Kholusia, 13, 13, 20, 0, false, Enums.NodeType.Ephemeral, Enums.Aethersand.Chiarglow, Enums.ClusterType.Earth, Enums.Gatherer.Botanist, Enums.ScripType.None),
+                Build("White Clay", Constants.Zones.Kholusia, 13, 13, 20, 0, false, Enums.NodeType.Ephemeral, Enums.Aethersand.Chiaroglow, Enums.ClusterType.Earth, Enums.Gatherer.Botanist, Enums.ScripType.None),
                 Build("Sweet Marjoram", Constants.Zones.RaktikaGreatwood, 29, 24, 4, 8, false, Enums.NodeType.Ephemeral, Enums.Aethersand.Scuroglow, Enums.ClusterType.Wind, Enums.Gatherer.Botanist, Enums.ScripType.None),
             };
         }

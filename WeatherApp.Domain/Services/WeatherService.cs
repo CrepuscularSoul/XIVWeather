@@ -332,6 +332,7 @@ namespace WeatherApp.Domain.Services
                 Zones.AmhAraeng => 48,
                 Zones.IlMheg => 49,
                 Zones.RaktikaGreatwood => 50,
+                Zones.Tempest => 51,
                 _ => default
             };
         }
