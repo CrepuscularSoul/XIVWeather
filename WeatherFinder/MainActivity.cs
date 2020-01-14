@@ -34,7 +34,7 @@ namespace WeatherFinder
             nv.SetNavigationItemSelectedListener(this);
 
             var tb = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolbar);
-            //inflates the menu. Using this instead of overriding OnCreateOptionsMenu() to avoid the overflow menu
+            //Using this instead of overriding OnCreateOptionsMenu() to avoid the overflow menu
             tb.InflateMenu(Resource.Menu.main_menu);
             SetSupportActionBar(tb);
             var ab = SupportActionBar;

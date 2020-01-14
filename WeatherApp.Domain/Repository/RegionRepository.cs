@@ -755,6 +755,16 @@ namespace WeatherApp.Domain.Repository
                             new WeatherBreakpoint { Value = 100, Weather = Enums.Weather.Clouds}
                         }
                     },
+                    new Zone
+                    {
+                        Name = Constants.Zones.Tempest,
+                        WeatherBreakpoints = new List<WeatherBreakpoint>
+                        {
+                            new WeatherBreakpoint { Value = 20, Weather = Enums.Weather.Clouds },
+                            new WeatherBreakpoint { Value = 80, Weather = Enums.Weather.FairSkies },
+                            new WeatherBreakpoint { Value = 100, Weather = Enums.Weather.ClearSkies }
+                        }
+                    }
                 }
             };
     }

@@ -96,10 +96,29 @@ namespace WeatherApp.Domain.Models
         public enum Aethersand
         {
             None,
+
+            //HW
+            Duskborne,
+            Dawnborne,
+            Landborne,
+            Leafborne,
+            Seaborne,
+            LightKissed,
+
+            //SB
+            Dusklight,
+            Dawnlight,
+            Everbright,
+            Everborn,
+            Everdeep,
+            Duskglow,
+
+            //ShB
+            Chiaroglow,
             Scuroglow,
-            Chiarglow,
-            Agedeep,
-            Agewood
+            Agedeep,	
+            Agewood,	
+            Ageflow
         }
 
         /// <summary>
