@@ -68,6 +68,13 @@ namespace WeatherApp.Domain.Repository
                 Build("Prismstone", Constants.Zones.IlMheg, 30, 21, 4, 6, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Miner, Enums.ScripType.White),
                 Build("Berrylium Ore", Constants.Zones.IlMheg, 30, 21, 4, 6, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Miner, Enums.ScripType.None),
                 Build("Tungsten Ore", Constants.Zones.Tempest, 32, 7, 10, 12, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Miner, Enums.ScripType.White),
+
+                Build("Imperial Fern", Constants.Zones.Kholusia, 28, 21, 0, 2, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Botanist, Enums.ScripType.None),
+                Build("Fireheart Cobalt", Constants.Zones.Lakeland, 4, 33, 2, 4, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Miner, Enums.ScripType.None),
+                Build("Duskblooms", Constants.Zones.AmhAraeng, 32, 34, 4, 6, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Botanist, Enums.ScripType.None),
+                Build("Purpure Shell Chip", Constants.Zones.Tempest, 35, 31, 6, 8, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Miner, Enums.ScripType.None),
+                Build("Merbau Logs", Constants.Zones.IlMheg, 36, 27, 8, 10, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Botanist, Enums.ScripType.None),
+                Build("Ashen Alumen", Constants.Zones.AmhAraeng, 21, 8, 10, 12, true, Enums.NodeType.Legendary, Enums.Aethersand.None, Enums.ClusterType.None, Enums.Gatherer.Miner, Enums.ScripType.None),
             };
         }
 
