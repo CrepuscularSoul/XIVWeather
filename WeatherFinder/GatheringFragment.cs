@@ -40,7 +40,8 @@ namespace WeatherFinder
         /// </summary>
         private void GetEphemeralNodeDetails(object sender, EventArgs args)
         {
-            var items = GatheringService.GetItemsOfType(Enums.NodeType.Ephemeral, true);
+            var sort = _view.FindViewById<CheckBox>(Resource.Id.chkSortByStart).Checked;
+            var items = GatheringService.GetItemsOfType(Enums.NodeType.Ephemeral, sort);
             PopulateTableView(items);
         }
 
@@ -49,7 +50,8 @@ namespace WeatherFinder
         /// </summary>
         private void GetUnspoiledNodeDetails(object sender, EventArgs args)
         {
-            var items = GatheringService.GetItemsOfType(Enums.NodeType.Unspoiled, false);
+            var sort = _view.FindViewById<CheckBox>(Resource.Id.chkSortByStart).Checked;
+            var items = GatheringService.GetItemsOfType(Enums.NodeType.Unspoiled, sort);
             PopulateTableView(items);
         }
 
@@ -58,7 +60,8 @@ namespace WeatherFinder
         /// </summary>
         private void GetLegendaryNodeDetails(object sender, EventArgs args)
         {
-            var items = GatheringService.GetItemsOfType(Enums.NodeType.Legendary, false);
+            var sort = _view.FindViewById<CheckBox>(Resource.Id.chkSortByStart).Checked;
+            var items = GatheringService.GetItemsOfType(Enums.NodeType.Legendary, sort);
             PopulateTableView(items);
         }
 
